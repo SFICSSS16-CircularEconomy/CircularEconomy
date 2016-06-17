@@ -1,0 +1,57 @@
+
+== Complexity insights into Circular Economy ==
+
+'''Specific wiki subpage [[CircularEconomy | here]]'''
+
+
+=== Keywords ===
+
+Complexity economics, Network optimization, Urban systems, Agent-based modeling
+
+=== Summary ===
+The 'circular economy' is recent approach on questions of sustainability. The current 'take, make, waste' way of producing is considered to be not sustainable anymore. Current thoughts on 'closing the loop' mechanisms on producing and consuming are booming in many different academic fields. However, not yet from an integrated point of view. The idea of 'closing the loop' mechanisms corresponds to complex system paradigms, however complexity science has hardly been utilized in this field. In this project we want to start brainstorming on how complexity science can contribute to the field of circular economy. We think there are many ways in which complexity science can contribute, both in methods and in theory. Based on the competences in the group we would like to brainstorm on suitable research questions, that can range from very practical to theoretical issues.
+
+
+
+=== Insights ===
+
+''Please contribute here by adding your insights''
+
+* (Juste) From the point of view of theoretical geography, I think this question directly enters the frame of the understanding of human settlements. Distribution of population and ressources in space and time is a fundamental question for which many theories have been proposed (Evolutive Urban theory, Scaling theories, Human territoriality, etc. among others) and that many disciplines have studied (economics, geography, planning, archeology, more recently physics). To my point of view this project has a strong component linked to this issue, as it tackles the question of sustainable territorial organizations and the possibility of the existence of closed subsystems. As a consequence, the study of circular economic systems should necessarily consider them as being, among others (1) multi-scalar, (2) non-ergodic and (3) non stationary [beside buzz-words : 1) urban systems exhibit by nature multi-scalarity, and thus a circular organization of ressources management would also be as it is necessarily embedded into an urban structure ; 2) path-dependancy and geographical context in urban systems generally imply that universality is difficult to establish and makes direct comparison hazardous : urban systems all over the world do not correspond to realizations of the same process at different times (see Pumain, 2012) ; 3) urban systems as economic systems in general are never at equilibrium and the nature and positions of attractors changes in times, i.e. parameters of the dynamic do not have a stationary distribution]. For these reasons, complexity approaches are a natural way to study them, and build associated models that include these properties.
+
+* (Lorraine) Also from a cities perspective: taking the city as a non-equilibrium system, one could say the city forms a dissipative structure (Bristow and Kennedy, 2015) - this is also the case for ecosystems (Schneider and Kay, 1994). Dissipative structures maximize destruction of energy gradients (i.e., as the structure becomes more ordered/grows, more energy flows through). This has direct implications for increasing resource consumption in growing cities. Furthermore, scaling relationships for cities show that consumption of resources scales superlinearly with population (Bettencourt, 2013; Bettencourt et al, 2007), which implies that as cities grow, more and more energy is consumed. It would be interesting to explore the concept of a circular economy in such a system, i.e., can a "circular economy" policy mechanism actually change the organic dissipative/scaling nature of cities? Further, since ecosystems are also dissipative structures, are there examples of "circular economies" in ecology that can serve as a model for cities? Just some ideas, would love to discuss more.
+
+* (Ben) I have worked on the topic of cleaning data sets for sustainable industrial production systems. Some of the work have been documented in http://enipedia.tudelft.nl/wiki/Industrial_Symbiosis_Data_Sources. I can also access to Europe Waste/pollution registry (stored as RDF format). It covers major industrial polluters in Europe.
+
+=== Organization ===
+
+==== Timetable ====
+
+As many meetings are scheduled, we will meet both tonight at 7pm (Wednesday) and tomorrow at 9pm (after physics lab) at the coffee shop. People interested can join one or both. A summary of the first meeting will be updated here.
+
+==== Repository ====
+
+Git repository for the project : [https://github.com/SFICSSS16-CircularEconomy/CircularEconomy] . please email project contacts to obtain full write access (or do PR directly).
+
+=== Group contact ===
+
+[[Joris Broere]] j.j.broere@uu.nl
+
+[[Juste Raimbault]] juste.raimbault@polytechnique.edu
+
+=== People interested please sign up below ===
+*[[Joris Broere]]
+*[[Juste Raimbault]]
+*[[Marius Somveille]]
+*[[Scott Armstrong]]
+*[[Christine Moore]]
+*[[Lorraine Sugar]]
+*[[Evelyn Strombom]]
+*[[Jesus Mario Serna]]
+*[[Ben Zhu]]
+*[[Devrim Ikizler]] (devrimikizler@gmail.com)
+*[[Mika Straka]]
+*[[Nai Seng Wong]] (fsgwns@gmail.com)
+
+
+
