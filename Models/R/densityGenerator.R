@@ -38,7 +38,7 @@ spatializedExpMixtureDensity <- function(gridSize,N,alpha,proba=TRUE,rmin=0,rmax
   #  -> take P from deterministic distrib ; draw r.
   
   for(i in 1:N){
-    #show(i)
+    show(i)
     pop_i = Pmax*i^{-alpha}
     r_i = runif(1,min=rmin,max=rmax)
     d_i = pop_i / (2*pi*(r_i^2))
@@ -104,7 +104,7 @@ pseudoClosing <- function(mat,rcut){
 
 
 # test the function
-#test = spatializedExpMixtureDensity(300,20,0.5)
+test = spatializedExpMixtureDensity(100,20,0.7)
 #persp3D(z=test)
 # -> not disgusting
 

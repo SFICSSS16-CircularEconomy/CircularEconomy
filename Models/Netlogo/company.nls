@@ -1,0 +1,13 @@
+
+;; companies
+
+
+to new-company
+  set shape "circle" set size 1 set color blue
+  
+  ; input-output params
+  set input-mean random-float 1 set output-mean random-float 1
+  
+  
+end
+

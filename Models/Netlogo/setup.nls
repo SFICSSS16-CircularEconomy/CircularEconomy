@@ -1,0 +1,47 @@
+
+;; setup
+
+
+
+to setup
+  ca
+  
+  if setup-type = "synthetic" [
+    setup-synthetic 
+  ]
+  
+  reset-ticks
+end
+
+
+
+
+to setup-synthetic
+  
+  generate-synthetic-density
+  
+  setup-companies
+  
+end
+
+
+to generate-synthetic-density
+  repeat #-cities [
+    apply-poisson-kernel city-radius 1 "density" (one-of patches)
+  ]
+  let stot sum [density] of patches
+  ask patches [set density density / stot]
+end
+
+
+to setup-companies
+  let patch-list to-list patches
+  create-company #-companies [
+    new-company 
+    
+    ; draw position at random given density distrib
+    let s 0 let r random-float 1 foreach patch-list [ask ? [set s s + density] if s > r [setxy [pxcor] of ? [pycor] of ?]]
+    setxy xcor - 0.5 + random-float 1 ycor - 0.5 + random-float 1
+  ]
+end
+
