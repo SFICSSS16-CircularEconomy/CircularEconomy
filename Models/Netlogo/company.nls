@@ -2,12 +2,55 @@
 ;; companies
 
 
+;;
+;  draw the currently prospecting company
+to-report get-prospecting-company
+  report one-of companies
+end
+
+
+
+
+
+
 to new-company
   set shape "circle" set size 1 set color blue
   
   ; input-output params
-  set input-mean random-float 1 set output-mean random-float 1
+  ;set input-mean random-float 1 set output-mean random-float 1
   
+  set input-distribution company-distribution
+  set output-distribution company-distribution
   
 end
+
+
+;;
+;
+to-report company-distribution
+  ; for now probability distributions
+  
+  if distrib-type = "uniform-mean-gaussian" [
+    ; try it dirtily by sampling a gaussian ? -> can it change something by adding some noise in the distrib
+    let distrib rep 0 distrib-discretization-step
+     
+    let distrib-mean (distrib-var * distrib-discretization-step) + ((random-float distrib-discretization-step) - (2 * distrib-var * distrib-discretization-step))
+    
+    repeat distrib-bootstrap-step [
+      let val min list (distrib-discretization-step - 1) (max list 0 (floor (random-normal distrib-mean (distrib-var * distrib-discretization-step))))
+      set distrib replace-item val distrib ((item val distrib) + 1)
+    ]
+    
+    let m sum distrib set distrib map [? / m] distrib
+    report distrib
+  ]
+  
+  ; by default report a uniform distrib
+  report rep (1 / distrib-discretization-step) distrib-discretization-step
+end
+
+
+
+
+
 

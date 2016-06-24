@@ -32,6 +32,32 @@ __includes [
 
 
 
+globals [
+  
+  ;;;;;;;;;;
+  ; setup
+  
+  ; synthetic
+  synthetic-hierarchy
+  
+  ; distrib discretization
+  distrib-discretization-step
+  
+  ; for bootstrapped distribution, number of step needed
+  distrib-bootstrap-step
+  
+  ;;;;;;;;;;
+  ; runtime
+  
+  ; the currently prospecting company 
+  prospecting-company
+  
+  
+  
+  
+]
+
+
 
 patches-own [
   density
@@ -39,19 +65,24 @@ patches-own [
 
 
 
-breed [company companies]
+breed [companies company]
 
-company-own[
-   input-mean
-   output-mean
+companies-own[
+  
+  ;;
+  ; Input and ouput distributions
+  ;    coded as distretized [0;1]
+  input-distribution
+  output-distribution
+   
+   
 ]
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 547
 20
-1166
-660
+1167
+661
 30
 30
 10.0
@@ -93,7 +124,7 @@ SLIDER
 #-cities
 0
 10
-6
+5
 1
 1
 NIL
@@ -108,7 +139,7 @@ city-radius
 city-radius
 0
 50
-10
+4
 1
 1
 NIL
@@ -123,19 +154,19 @@ SLIDER
 #-companies
 0
 100
-50
+40
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-6
-212
-160
-245
-product-distrib-var
-product-distrib-var
+9
+261
+181
+294
+distrib-var
+distrib-var
 0
 1
 0.2
@@ -160,6 +191,16 @@ NIL
 NIL
 NIL
 1
+
+CHOOSER
+9
+211
+176
+256
+distrib-type
+distrib-type
+"uniform-mean-gaussian"
+0
 
 @#$#@#$#@
 ## WHAT IS IT?

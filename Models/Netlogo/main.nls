@@ -2,3 +2,26 @@
 
 ;; main
 
+
+
+to go
+  
+  ; get the currently contracting company
+  set prospecting-company get-prospecting-company
+  
+  ; get potential partners
+  ; distance interaction potential
+  
+  ; threshold rule
+  
+  
+  
+  
+  
+  
+  
+end
+
+
+
+

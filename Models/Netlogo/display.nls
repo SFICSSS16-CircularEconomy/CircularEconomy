@@ -1,3 +1,12 @@
 
 ;; display
 
+to color-patches
+  let ma max [density] of patches let mi min [density] of patches
+  if ma > mi [
+    ask patches [set pcolor scale-color red density mi ma] 
+  ]
+end
+
+
+
