@@ -5,7 +5,47 @@
 ;;
 ;  draw the currently prospecting company
 to-report get-prospecting-company
-  report one-of companies
+  report one-of companies with-min [count link-neighbors]
+end
+
+
+;;
+; get potential partners of a company
+;  does both distance drawing and threshol rule
+to-report get-potential-partners
+   ; get potential partners
+   let potential-partners []
+   ; distance interaction potential
+   ; V_ij ~ 1/d_ij ^alpha ? easier with exp potential : |P(i->j) = exp(-d_ij/d_0)
+   ask other companies [
+     if random-float 1 < exp (- distance myself / interaction-decay) [set potential-partners lput self potential-partners]
+   ]
+   
+   let res []
+   ; threshold rule
+   ; -> here already compute overlaps for potential partners
+   ask other companies [
+     set current-input-overlap distribution-overlap [output-distribution] of myself input-distribution
+     set current-output-overlap distribution-overlap [input-distribution] of myself output-distribution 
+     if current-input-overlap > bargain-threshold or current-output-overlap > bargain-threshold [
+       set res lput self res
+     ]
+   ]
+    
+   report to-agentset res
+end
+
+
+;;
+; establish a link between two companies
+to make-trade [seller buyer]
+  ; make the link
+  ask seller [create-flow-to buyer [set weight [current-output-overlap] of myself set color blue set thickness weight / 5]]
+  set traded-quantity [current-output-overlap] of seller
+  ; adapt distributions
+  let prev-output [output-distribution] of seller
+  ask seller [set output-distribution remaining-distribution output-distribution [input-distribution] of buyer]
+  ask buyer [set input-distribution remaining-distribution input-distribution prev-output]
 end
 
 
@@ -49,6 +89,21 @@ to-report company-distribution
   report rep (1 / distrib-discretization-step) distrib-discretization-step
 end
 
+
+;;
+; overlap of two distributions 
+;  -> sum min d1,d2
+to-report distribution-overlap [d1 d2]
+  let m [] let i 0
+  foreach d1 [set m lput (min list ? item i d2) m set i i + 1]
+  report sum m
+end 
+
+to-report remaining-distribution [d1 d2]
+  let res d1 let i 0
+  foreach d1 [set res replace-item i res (? - (min list ? item i d2)) set i i + 1]
+  report res
+end
 
 
 

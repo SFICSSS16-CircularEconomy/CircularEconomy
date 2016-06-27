@@ -27,7 +27,7 @@ to setup-globals
   ;
   set distrib-discretization-step 100
   
-  set distrib-bootstrap-step 1000
+  set distrib-bootstrap-step 10000
     
 end
 

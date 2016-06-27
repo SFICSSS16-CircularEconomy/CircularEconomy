@@ -6,19 +6,39 @@
 
 to go
   
+  ; reset previous step overlaps and utilities
+  reset-utility-vars
+  
   ; get the currently contracting company
   set prospecting-company get-prospecting-company
   
-  ; get potential partners
-  ; distance interaction potential
+  let buyer nobody let seller nobody
+  ask prospecting-company [
+   
+    ; get potential partners
+    let potential-partners get-potential-partners
+    
+    if potential-partners != nobody [
+      ask potential-partners [compute-utilities (distance myself)]
+      
+      ; trades for output and input
+      ;;  - choice between selling and buying -
+      let max-output-utility max [current-input-utility] of potential-partners
+      let max-input-utility max [current-output-utility] of potential-partners 
+    
+      ifelse max-output-utility > max-input-utility [
+        set current-output-utility max-output-utility
+        set seller self set buyer one-of potential-partners with-max [current-input-utility] 
+      ][
+        set current-input-utility max-input-utility
+        set buyer self set seller one-of potential-partners with-max [current-output-utility]
+      ]
+    ]
+  ]
   
-  ; threshold rule
+  make-trade seller buyer
   
-  
-  
-  
-  
-  
+  tick
   
 end
 

@@ -12,6 +12,7 @@ __includes [
   
   ;; agents
   "company.nls"
+  "utility.nls"
   
   ;; indicators
   "indicators.nls"
@@ -52,8 +53,7 @@ globals [
   ; the currently prospecting company 
   prospecting-company
   
-  
-  
+  traded-quantity
   
 ]
 
@@ -75,13 +75,28 @@ companies-own[
   input-distribution
   output-distribution
    
+  ;; current input and output overlaps (with current prospecting company)
+  ; input against output of current comp
+  current-input-overlap
+  ; output against input of current
+  current-output-overlap
+  
+  ; idem with utilities
+  current-input-utility
+  current-output-utility
    
+]
+
+directed-link-breed [flows flow]
+
+flows-own [
+  weight 
 ]
 @#$#@#$#@
 GRAPHICS-WINDOW
-547
+382
 20
-1167
+1002
 661
 30
 30
@@ -169,17 +184,17 @@ distrib-var
 distrib-var
 0
 1
-0.2
+0.5
 0.05
 1
 NIL
 HORIZONTAL
 
 BUTTON
-254
-29
-320
-62
+252
+30
+315
+63
 setup
 setup
 NIL
@@ -201,6 +216,111 @@ distrib-type
 distrib-type
 "uniform-mean-gaussian"
 0
+
+SLIDER
+9
+317
+181
+350
+interaction-decay
+interaction-decay
+0
+100
+20
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+9
+354
+181
+387
+bargain-threshold
+bargain-threshold
+0
+1
+0.1
+0.05
+1
+NIL
+HORIZONTAL
+
+PLOT
+1016
+22
+1360
+255
+overlap
+NIL
+NIL
+0.0
+1.0
+0.0
+10.0
+true
+false
+"" "set-plot-pen-mode 1\nhistogram (concatenate list [current-input-overlap] of companies with [current-input-overlap > 0] [current-output-overlap] of companies with [current-output-overlap > 0])"
+PENS
+"default" 1.0 0 -16777216 true "" ""
+
+SLIDER
+8
+391
+181
+424
+transportation-cost
+transportation-cost
+0
+1
+0.05
+0.01
+1
+NIL
+HORIZONTAL
+
+BUTTON
+253
+72
+316
+105
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+OUTPUT
+1018
+509
+1396
+843
+10
+
+PLOT
+1019
+268
+1219
+418
+trade
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot traded-quantity"
 
 @#$#@#$#@
 ## WHAT IS IT?
