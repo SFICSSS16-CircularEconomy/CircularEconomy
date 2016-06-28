@@ -58,6 +58,9 @@ globals [
   ; list of time-series of cumulated waste
   waste-history
    
+  ; headless
+  headless?
+   
 ]
 
 
@@ -131,7 +134,7 @@ CHOOSER
 setup-type
 setup-type
 "synthetic-city-system" "uniform"
-0
+1
 
 SLIDER
 5
@@ -229,7 +232,7 @@ interaction-decay
 interaction-decay
 0
 100
-84
+24
 1
 1
 NIL
