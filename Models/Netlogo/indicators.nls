@@ -11,6 +11,9 @@
 ; - network : components, centrality, in/out-degree, mean-flow (==number of edges given total waste), clustering coef
 ;  
 
+; TODO : mean path length as circularity
+
+
 
 to setup-indicators
   set-nw-context
