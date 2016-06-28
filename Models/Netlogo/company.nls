@@ -40,7 +40,7 @@ end
 ; establish a link between two companies
 to make-trade [seller buyer]
   ; make the link
-  ask seller [create-flow-to buyer [set weight [current-output-overlap] of myself set color blue set thickness weight / 5]]
+  ask seller [create-flow-to buyer [set weight [current-output-overlap] of myself set color blue set thickness weight / 3]]
   set traded-quantity [current-output-overlap] of seller
   ; adapt distributions
   let prev-output [output-distribution] of seller

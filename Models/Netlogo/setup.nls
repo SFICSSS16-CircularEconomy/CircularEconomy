@@ -8,8 +8,14 @@ to setup
   
   setup-globals 
  
-  if setup-type = "synthetic" [
+  if setup-type = "synthetic-city-system" [
     setup-synthetic 
+  ]
+  
+  if setup-type = "uniform" [
+     ; nothing to do, just setup companies
+     ;;  Note : our modular archi is profudly shitty here, intrincated
+     setup-companies
   ]
   
   color-patches
@@ -22,12 +28,14 @@ end
 to setup-globals
   
   ;
-  set synthetic-hierarchy 1.1
+  ;set synthetic-hierarchy 1.1
   
   ;
   set distrib-discretization-step 100
   
   set distrib-bootstrap-step 10000
+   
+  set waste-history []
     
 end
 
@@ -42,10 +50,10 @@ end
 
 
 to generate-synthetic-density
-  ; P_i = Pmax / i ^ \alpha - with Pmax= 1, P_i = 1/i^alpha ; sqrt(2*pi)*
+  ; P_i = Pmax / i ^ \alpha - with Pmax= 1, P_i = 1/i^alpha ; total pop for one kernel : P = 1/i^alpha = 2*pi*r_i
   let i 1
   repeat #-cities [
-    apply-poisson-kernel city-radius 1 / (i ^ synthetic-hierarchy) "density" (one-of patches)
+    apply-poisson-kernel city-radius / (i ^ (synthetic-hierarchy - 1)) 1 "density" (one-of patches)
     set i i + 1
   ]
   let stot sum [density] of patches
@@ -55,12 +63,19 @@ end
 
 to setup-companies
   let patch-list to-list patches
+  let uniform (sum [density] of patches = 0)
   create-companies #-companies [
     new-company 
     
     ; draw position at random given density distrib
-    let s 0 let r random-float 1 let found false foreach patch-list [ask ? [set s s + density] if s > r and not found [setxy [pxcor] of ? [pycor] of ? set found true]]
-    setxy xcor - 0.5 + random-float 1 ycor - 0.5 + random-float 1
+    ; 
+    ifelse uniform = true [
+      setxy random-xcor random-ycor
+    ]
+    [
+      let s 0 let r random-float 1 let found false foreach patch-list [ask ? [set s s + density] if s > r and not found [setxy [pxcor] of ? [pycor] of ? set found true]]
+      setxy xcor - 0.5 + random-float 1 ycor - 0.5 + random-float 1
+    ]
   ]
 end
 

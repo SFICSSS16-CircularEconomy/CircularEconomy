@@ -1,3 +1,27 @@
 
 
 ;; indicators
+
+to compute-indicators
+  
+end
+
+
+
+;;
+; total waste accross all companies
+to-report total-waste
+  report sum [sum output-distribution] of companies
+end
+
+
+
+;;;;;
+;; network-indcators
+
+
+to test
+  ;nw:set-snapshot
+end
+
+

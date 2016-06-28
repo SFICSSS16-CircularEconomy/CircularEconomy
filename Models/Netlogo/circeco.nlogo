@@ -1,5 +1,5 @@
 
-extensions []
+extensions [nw]
 
 
 __includes [
@@ -39,7 +39,7 @@ globals [
   ; setup
   
   ; synthetic
-  synthetic-hierarchy
+  ;synthetic-hierarchy
   
   ; distrib discretization
   distrib-discretization-step
@@ -55,6 +55,9 @@ globals [
   
   traded-quantity
   
+  ; list of time-series of cumulated waste
+  waste-history
+   
 ]
 
 
@@ -121,14 +124,14 @@ ticks
 30.0
 
 CHOOSER
-14
-19
-152
-64
+4
+25
+189
+70
 setup-type
 setup-type
-"synthetic"
-0
+"synthetic-city-system" "uniform"
+1
 
 SLIDER
 5
@@ -146,10 +149,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-98
-73
-195
-106
+99
+72
+196
+105
 city-radius
 city-radius
 0
@@ -161,25 +164,25 @@ NIL
 HORIZONTAL
 
 SLIDER
-7
-148
-122
-181
+205
+178
+320
+211
 #-companies
 #-companies
 0
 100
-40
+41
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-9
-261
-181
-294
+7
+202
+179
+235
 distrib-var
 distrib-var
 0
@@ -191,10 +194,10 @@ NIL
 HORIZONTAL
 
 BUTTON
-252
-30
-315
-63
+257
+481
+320
+514
 setup
 setup
 NIL
@@ -208,35 +211,35 @@ NIL
 1
 
 CHOOSER
-9
-211
-176
-256
+7
+155
+174
+200
 distrib-type
 distrib-type
 "uniform-mean-gaussian"
 0
 
 SLIDER
-9
-317
-181
-350
+12
+321
+184
+354
 interaction-decay
 interaction-decay
 0
 100
-20
+6
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-9
-354
-181
-387
+12
+358
+184
+391
 bargain-threshold
 bargain-threshold
 0
@@ -250,8 +253,8 @@ HORIZONTAL
 PLOT
 1016
 22
-1360
-255
+1218
+188
 overlap
 NIL
 NIL
@@ -266,25 +269,25 @@ PENS
 "default" 1.0 0 -16777216 true "" ""
 
 SLIDER
-8
-391
-181
-424
+11
+395
+184
+428
 transportation-cost
 transportation-cost
 0
 1
-0.05
+0.29
 0.01
 1
 NIL
 HORIZONTAL
 
 BUTTON
-253
-72
-316
-105
+257
+525
+320
+558
 NIL
 go
 T
@@ -298,17 +301,17 @@ NIL
 1
 
 OUTPUT
-1018
-509
-1396
-843
+1016
+459
+1394
+793
 10
 
 PLOT
-1019
-268
-1219
-418
+1222
+23
+1395
+188
 trade
 NIL
 NIL
@@ -321,6 +324,89 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot traded-quantity"
+
+PLOT
+1017
+200
+1217
+350
+waste
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot total-waste"
+
+SLIDER
+4
+108
+161
+141
+synthetic-hierarchy
+synthetic-hierarchy
+0
+2
+1.5
+0.05
+1
+NIL
+HORIZONTAL
+
+TEXTBOX
+7
+248
+382
+266
+-----------------------------------------------------------
+11
+0.0
+1
+
+TEXTBOX
+11
+10
+161
+28
+SETUP
+11
+0.0
+1
+
+TEXTBOX
+5
+258
+155
+276
+RUNTIME
+11
+0.0
+1
+
+TEXTBOX
+16
+301
+166
+319
+Parameters
+11
+0.0
+1
+
+TEXTBOX
+14
+512
+164
+530
+Options
+11
+0.0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
