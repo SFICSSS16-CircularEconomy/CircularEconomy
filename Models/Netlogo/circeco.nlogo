@@ -131,7 +131,7 @@ CHOOSER
 setup-type
 setup-type
 "synthetic-city-system" "uniform"
-1
+0
 
 SLIDER
 5
@@ -172,7 +172,7 @@ SLIDER
 #-companies
 0
 100
-41
+100
 1
 1
 NIL
@@ -181,7 +181,7 @@ HORIZONTAL
 SLIDER
 7
 202
-179
+174
 235
 distrib-var
 distrib-var
@@ -229,7 +229,7 @@ interaction-decay
 interaction-decay
 0
 100
-6
+84
 1
 1
 NIL
@@ -250,24 +250,6 @@ bargain-threshold
 NIL
 HORIZONTAL
 
-PLOT
-1016
-22
-1218
-188
-overlap
-NIL
-NIL
-0.0
-1.0
-0.0
-10.0
-true
-false
-"" "set-plot-pen-mode 1\nhistogram (concatenate list [current-input-overlap] of companies with [current-input-overlap > 0] [current-output-overlap] of companies with [current-output-overlap > 0])"
-PENS
-"default" 1.0 0 -16777216 true "" ""
-
 SLIDER
 11
 395
@@ -277,7 +259,7 @@ transportation-cost
 transportation-cost
 0
 1
-0.29
+0.12
 0.01
 1
 NIL
@@ -308,31 +290,13 @@ OUTPUT
 10
 
 PLOT
-1222
-23
-1395
-188
-trade
-NIL
-NIL
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "plot traded-quantity"
-
-PLOT
-1017
-200
-1217
-350
+1016
+21
+1280
+213
 waste
-NIL
-NIL
+time
+total waste
 0.0
 10.0
 0.0
@@ -406,6 +370,63 @@ TEXTBOX
 Options
 11
 0.0
+1
+
+MONITOR
+1015
+402
+1089
+447
+NIL
+total-waste
+17
+1
+11
+
+PLOT
+1016
+216
+1279
+389
+cost
+time
+cost
+0.0
+10.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot total-cost"
+
+MONITOR
+1096
+402
+1160
+447
+NIL
+total-cost
+17
+1
+11
+
+BUTTON
+1198
+410
+1326
+443
+NIL
+compute-indicators
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
 1
 
 @#$#@#$#@

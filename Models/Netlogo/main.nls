@@ -58,9 +58,9 @@ end
 ;  or no new links ? not sure because can pick a guy and nothing happens (rq : algo not blocked as random at each step)
 ;   - delta-waste very small ? -> cumulated delta-waste very small <-
 to-report stop-criteria?
-  if length waste-history < 20 [report false]
+  if length waste-history < 100 [report false]
   ; else compute the ∆waste
-  let wq  (sublist waste-history (length waste-history - 20) length waste-history)
+  let wq  (sublist waste-history (length waste-history - 100) length waste-history)
   let s 0 let i 0 foreach but-first wq [set s s + (? - item i wq) set i i + 1] set s s / length but-first wq
   ;output-print s ; DEBUG
   report abs s < (#-companies / 1000)
