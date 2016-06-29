@@ -22,6 +22,8 @@ to setup-experiment [t distribution-sd gravity-decay overlap-threshold transport
   set bargain-threshold overlap-threshold
   set transportation-cost transport-cost
   
+  set headless? true
+  
   setup
   
 end

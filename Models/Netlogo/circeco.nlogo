@@ -21,6 +21,9 @@ __includes [
   "display.nls"
   
   
+  ;; experiments
+  "experiments.nls"
+  
   ;;;;;;;;;;;
   ;; utils
   
@@ -160,7 +163,7 @@ city-radius
 city-radius
 0
 50
-4
+5
 1
 1
 NIL
@@ -175,7 +178,7 @@ SLIDER
 #-companies
 0
 100
-100
+50
 1
 1
 NIL
@@ -190,7 +193,7 @@ distrib-var
 distrib-var
 0
 1
-0.5
+0.1
 0.05
 1
 NIL
@@ -232,7 +235,7 @@ interaction-decay
 interaction-decay
 0
 100
-24
+10
 1
 1
 NIL
@@ -247,7 +250,7 @@ bargain-threshold
 bargain-threshold
 0
 1
-0.1
+0.05
 0.05
 1
 NIL
@@ -262,7 +265,7 @@ transportation-cost
 transportation-cost
 0
 1
-0.12
+0.05
 0.01
 1
 NIL
@@ -319,7 +322,7 @@ synthetic-hierarchy
 synthetic-hierarchy
 0
 2
-1.5
+1.3
 0.05
 1
 NIL
