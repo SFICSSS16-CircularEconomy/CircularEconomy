@@ -265,7 +265,7 @@ transportation-cost
 transportation-cost
 0
 1
-0.05
+0.46
 0.01
 1
 NIL
