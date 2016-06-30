@@ -40,7 +40,7 @@ end
 ; establish a link between two companies
 to make-trade [seller buyer]
   ; make the link
-  ask seller [create-flow-to buyer [set weight [current-output-overlap] of myself set color blue set thickness weight / 3]]
+  ask seller [if current-output-overlap = 0 [inspect self inspect buyer let x user-yes-or-no? ""] create-flow-to buyer [set weight [current-output-overlap] of myself set color blue set thickness weight / 3]]
   set traded-quantity [current-output-overlap] of seller
   ; adapt distributions
   let prev-output [output-distribution] of seller
@@ -69,6 +69,10 @@ end
 ;
 to-report company-distribution
   ; for now probability distributions
+  
+  
+  ; TODO : draw from a poisson - and then put the mean in the utility - also the transportation cost should depend on overlap (== quantity of product to transport)
+  
   
   if distrib-type = "uniform-mean-gaussian" [
     ; try it dirtily by sampling a gaussian ? -> can it change something by adding some noise in the distrib

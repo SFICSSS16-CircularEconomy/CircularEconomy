@@ -1,0 +1,9 @@
+
+;; stat functions
+
+to-report hist-to-sample [h]
+  let x [] let i 0
+  foreach h [set x concatenate (list x (rep i ?)) set i i + 1]
+  report x  
+end
+

@@ -28,13 +28,13 @@ to go
     
       ifelse max-output-utility > max-input-utility [
         if max-output-utility > 0 [
-          set current-output-utility max-output-utility
           set seller self set buyer one-of potential-partners with-max [current-input-utility] 
+          set current-output-utility [current-input-utility] of buyer set current-output-overlap [current-input-overlap] of buyer
         ]
       ][
         if max-input-utility > 0 [
-          set current-input-utility max-input-utility
           set buyer self set seller one-of potential-partners with-max [current-output-utility]
+          set current-input-utility [current-output-utility] of seller set current-input-overlap [current-output-overlap] of seller
         ]
       ]
     ]

@@ -25,5 +25,7 @@ end
 ; utility function
 to-report utility [o d]
   ; for now only linear : u = o - c*d / dmax
-  report o - transportation-cost * d / (sqrt (world-width ^ 2 + world-height ^ 2))
+  let u o - transportation-cost * d / (sqrt (world-width ^ 2 + world-height ^ 2))
+  ;output-print (word "o : " o " - u : " u)
+  report u
 end

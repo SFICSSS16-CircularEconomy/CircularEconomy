@@ -31,7 +31,7 @@ to setup-globals
   ;set synthetic-hierarchy 1.1
   
   ;
-  set distrib-discretization-step 100
+  set distrib-discretization-step 1000
   
   set distrib-bootstrap-step 10000
    

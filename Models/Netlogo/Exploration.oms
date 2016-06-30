@@ -5,19 +5,20 @@ import Model._
 
 //gravityDecay,distribSd,overlapThreshold,transportationCost
 val exploration = ExplorationTask(
-  (((gravityDecay in (10.0 to 100.0 by 10.0)) x
-  (distribSd in (0.1 to 0.5 by 0.1)) x
-  (overlapThreshold in (0.05 to 0.1 by 0.05)) x
+  (((gravityDecay in (10.0 to 100.0 by 5.0)) x
+  (distribSd in (0.1 to 0.5 by 0.05)) x
+  (overlapThreshold in (0.01 to 0.1 by 0.01)) x
   (transportationCost in (0.05 to 0.4 by 0.05))
-  ) withIndex id ) x (replication in UniformDistribution[Int]() take 1)
+  ) withIndex id ) x (replication in UniformDistribution[Int]() take 100)
 )
-val purpose = "test"
+val purpose = "grid_uniform"
 
 val eval = exploration -< model
 
 val indics_hook = AppendToCSVFileHook(workDirectory / "explo" / ((new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")).format(new Date()))+"_"+purpose+".csv")
 
-val local = LocalEnvironment(20)
+//val local = LocalEnvironment(20)
+val grid = DIRACEnvironment("vo.complex-systems.eu")
 
-exploration -< (model on local hook indics_hook)
+exploration -< (model on grid by 20000 hook indics_hook)
 

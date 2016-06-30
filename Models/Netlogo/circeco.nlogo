@@ -29,7 +29,7 @@ __includes [
   
   "utils/SpatialKernels.nls"
   "utils/List.nls"
-  
+  "utils/Statistics.nls"
   
   
 ]
@@ -84,6 +84,7 @@ companies-own[
   input-distribution
   output-distribution
    
+   
   ;; current input and output overlaps (with current prospecting company)
   ; input against output of current comp
   current-input-overlap
@@ -137,7 +138,7 @@ CHOOSER
 setup-type
 setup-type
 "synthetic-city-system" "uniform"
-1
+0
 
 SLIDER
 5
@@ -163,7 +164,7 @@ city-radius
 city-radius
 0
 50
-5
+6
 1
 1
 NIL
@@ -193,8 +194,8 @@ distrib-var
 distrib-var
 0
 1
-0.1
-0.05
+0.16
+0.01
 1
 NIL
 HORIZONTAL
@@ -235,7 +236,7 @@ interaction-decay
 interaction-decay
 0
 100
-10
+38
 1
 1
 NIL
@@ -250,8 +251,8 @@ bargain-threshold
 bargain-threshold
 0
 1
-0.05
-0.05
+0.04
+0.01
 1
 NIL
 HORIZONTAL
@@ -264,8 +265,8 @@ SLIDER
 transportation-cost
 transportation-cost
 0
-1
-0.46
+10
+0.7
 0.01
 1
 NIL
@@ -286,7 +287,7 @@ NIL
 NIL
 NIL
 NIL
-1
+0
 
 OUTPUT
 1016
@@ -322,7 +323,7 @@ synthetic-hierarchy
 synthetic-hierarchy
 0
 2
-1.3
+1.35
 0.05
 1
 NIL
