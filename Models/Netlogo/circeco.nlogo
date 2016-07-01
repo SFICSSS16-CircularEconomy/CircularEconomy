@@ -1,5 +1,5 @@
 
-extensions [nw]
+extensions [nw gis]
 
 
 __includes [
@@ -106,11 +106,11 @@ flows-own [
 GRAPHICS-WINDOW
 382
 20
-1002
-661
-30
-30
-10.0
+993
+652
+200
+200
+1.5
 1
 10
 1
@@ -120,10 +120,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--30
-30
--30
-30
+-200
+200
+-200
+200
 0
 0
 1

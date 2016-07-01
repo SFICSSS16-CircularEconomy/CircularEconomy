@@ -40,6 +40,12 @@ to setup-globals
 end
 
 
+to setup-world
+  gis:apply-raster gis:load-dataset "data/us.asc" density
+end
+
+
+
 to setup-synthetic
   
   generate-synthetic-density
