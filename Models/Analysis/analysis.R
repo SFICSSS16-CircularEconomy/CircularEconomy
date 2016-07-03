@@ -14,10 +14,11 @@ sres = res %>% group_by(distribSd,gravityDecay,overlapThreshold,transportationCo
   nwInDegree=mean(nwInDegree),nwMeanFlow=mean(nwMeanFlow),nwOutDegree=mean(nwOutDegree),
   totalCost=mean(totalCost),totalWaste=mean(totalWaste)
 )
-sres %>% mutate(id=1:nrow(sres))#group_indices(sres))
+
+#sres %>% mutate(id=1:nrow(sres))#group_indices(sres))
 
 
-g = ggplot(sres,aes(x=transportationCost,y=totalCost,color=gravityDecay,group=gravityDecay))
+g = ggplot(sres,aes(x=transportationCost,y=totalWaste,color=gravityDecay,group=gravityDecay))
 g+geom_line()+facet_grid(distribSd~overlapThreshold,scales = "free")
 
 
