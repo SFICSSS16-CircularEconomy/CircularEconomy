@@ -47,13 +47,15 @@ end
 
 
 to setup-gis
-  let dataset gis:load-dataset density-file
+  let dataset gis:load-dataset (word density-file ".asc")
   resize-world 0 gis:width-of dataset 0 gis:height-of dataset set-patch-size floor (600 / gis:width-of dataset)
   gis:set-world-envelope gis:envelope-of dataset
   gis:apply-raster dataset density
   ask patches [if not (density >= 0)[set density 0]]
   let stot sum [density] of patches
   ask patches [set density density / stot]
+  gis:set-drawing-color yellow
+  gis:draw gis:load-dataset (word density-file ".shp") 1
 end
 
 

@@ -442,7 +442,7 @@ INPUTBOX
 305
 70
 density-file
-data/nld.asc
+data/nld
 1
 0
 String
@@ -456,7 +456,7 @@ density-exponent
 density-exponent
 0
 3
-1.6
+1.8
 0.1
 1
 NIL
