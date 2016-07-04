@@ -106,11 +106,11 @@ flows-own [
 GRAPHICS-WINDOW
 382
 20
-993
-652
-200
-200
-1.5
+997
+536
+-1
+-1
+5.0
 1
 10
 1
@@ -120,10 +120,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--200
-200
--200
-200
+0
+120
+0
+96
 0
 0
 1
@@ -137,8 +137,8 @@ CHOOSER
 70
 setup-type
 setup-type
-"synthetic-city-system" "uniform"
-0
+"synthetic-city-system" "uniform" "gis"
+2
 
 SLIDER
 5
@@ -266,7 +266,7 @@ transportation-cost
 transportation-cost
 0
 10
-0.7
+4.11
 0.01
 1
 NIL
@@ -435,6 +435,32 @@ NIL
 NIL
 NIL
 1
+
+INPUTBOX
+199
+10
+305
+70
+density-file
+data/nld.asc
+1
+0
+String
+
+SLIDER
+183
+107
+328
+140
+density-exponent
+density-exponent
+0
+3
+1.6
+0.1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?

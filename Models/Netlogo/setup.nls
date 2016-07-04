@@ -15,8 +15,14 @@ to setup
   if setup-type = "uniform" [
      ; nothing to do, just setup companies
      ;;  Note : our modular archi is profudly shitty here, intrincated
-     setup-companies
+     
   ]
+  
+  if setup-type = "gis" [
+    setup-gis 
+  ]
+  
+  setup-companies
   
   color-patches
   
@@ -40,8 +46,14 @@ to setup-globals
 end
 
 
-to setup-world
-  gis:apply-raster gis:load-dataset "data/us.asc" density
+to setup-gis
+  let dataset gis:load-dataset density-file
+  resize-world 0 gis:width-of dataset 0 gis:height-of dataset set-patch-size floor (600 / gis:width-of dataset)
+  gis:set-world-envelope gis:envelope-of dataset
+  gis:apply-raster dataset density
+  ask patches [if not (density >= 0)[set density 0]]
+  let stot sum [density] of patches
+  ask patches [set density density / stot]
 end
 
 
@@ -49,8 +61,6 @@ end
 to setup-synthetic
   
   generate-synthetic-density
-  
-  setup-companies
   
 end
 
@@ -79,7 +89,9 @@ to setup-companies
       setxy random-xcor random-ycor
     ]
     [
-      let s 0 let r random-float 1 let found false foreach patch-list [ask ? [set s s + density] if s > r and not found [setxy [pxcor] of ? [pycor] of ? set found true]]
+      let s 0
+      let stot sum [density ^ density-exponent] of patches
+      let r random-float stot let found false foreach patch-list [ask ? [set s s + (density ^ density-exponent)] if s > r and not found [setxy [pxcor] of ? [pycor] of ? set found true]]
       setxy xcor - 0.5 + random-float 1 ycor - 0.5 + random-float 1
     ]
   ]
