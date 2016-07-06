@@ -14,6 +14,9 @@ to setup-experiment [t distribution-sd gravity-decay overlap-threshold transport
   set synthetic-hierarchy 1.3
   set distrib-type "uniform-mean-gaussian"
   set #-companies 50
+  set density-file "data/nld"
+  set density-exponent 1.5
+  
   
   ; setup-type choice : synthetic-city-system ; uniform
   set setup-type t

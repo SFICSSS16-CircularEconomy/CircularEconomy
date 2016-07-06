@@ -1,5 +1,5 @@
 
-extensions [nw]
+extensions [nw gis]
 
 
 __includes [
@@ -61,7 +61,7 @@ globals [
   ; list of time-series of cumulated waste
   waste-history
    
-   
+  
    
   ;;;;;;;;;;;;
   ;; Headless
@@ -78,6 +78,9 @@ globals [
   interaction-decay
   bargain-threshold
   transportation-cost
+   
+  density-file
+  density-exponent
    
 ]
 
