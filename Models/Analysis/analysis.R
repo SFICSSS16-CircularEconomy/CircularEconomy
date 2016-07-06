@@ -6,15 +6,15 @@ setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/CircularEconomy/Results/Exp
 
 
 #res <- as.tbl(read.csv('20160701_gridlocal/2016_07_01_07_18_26_grid_local.csv'))
-res <- as.tbl(read.csv('20160703_grid/2016_07_03_20_09_08_grid_uniform.csv'))
+res <- as.tbl(read.csv('20160706_grid_gis/2016_07_06_08_36_31_grid_gis_corrected.csv'))
+#res=res[res$finalTime!="null"&res$nwClustCoef!="null"&res$nwComponents!="null"&res$nwInDegree!="null"&res$nwClustCoef!="null"&res$nwOutDegree!="null"&res$totalCost!="null"&res$totalWaste!="null",]
 
-
-sres = res %>% group_by(id)%>% summarise(
+sres = res %>% group_by(distribSd,gravityDecay,overlapThreshold,transportationCost)%>% summarise(
   finalTime = mean(finalTime),nwClustCoef=mean(nwClustCoef),nwComponents=mean(nwComponents),
   nwInDegree=mean(nwInDegree),nwMeanFlow=mean(nwMeanFlow),nwOutDegree=mean(nwOutDegree),
-  totalCost=mean(totalCost),totalWaste=mean(totalWaste),
-  transportationCost=mean(transportationCost),gravityDecay=mean(gravityDecay),
-  distribSd=mean(distribSd),overlapThreshold=mean(overlapThreshold)
+  totalCost=mean(as.numeric(totalCost)),totalWaste=mean(totalWaste)#,
+  #transportationCost=mean(transportationCost),gravityDecay=mean(gravityDecay),
+  #distribSd=mean(distribSd),overlapThreshold=mean(overlapThreshold)
 )
 
 #sres %>% mutate(id=1:nrow(sres))#group_indices(sres))
@@ -33,14 +33,17 @@ multiplot(plotlist=plotlist,cols=4)
 
 # Pareto Front
 
-g = ggplot(sres,aes(x=totalWaste,y=totalCost,color=gravityDecay))
+g = ggplot(sres,aes(x=totalWaste,y=totalCost,color=overlapThreshold))
 g+geom_point(size=0.5)+facet_grid(transportationCost~distribSd,scales = "free")
 
 
 ##########
 ## convergence
 
-param_points = sample.int(2916,size=5)
+# pb - need to construct id for gis and synthetic city system.
+
+#param_points = sample.int(2916,size=5)
+param_points = seq(from=1,to)
 sample = res[res$id%in%param_points,]
 sample$id=as.character(sample$id)
 
