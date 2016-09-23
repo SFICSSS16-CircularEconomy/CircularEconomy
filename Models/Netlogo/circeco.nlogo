@@ -138,7 +138,7 @@ CHOOSER
 setup-type
 setup-type
 "synthetic-city-system" "uniform" "gis"
-2
+0
 
 SLIDER
 5
@@ -149,7 +149,7 @@ SLIDER
 #-cities
 0
 10
-5
+7
 1
 1
 NIL
@@ -236,7 +236,7 @@ interaction-decay
 interaction-decay
 0
 100
-38
+90
 1
 1
 NIL
@@ -266,7 +266,7 @@ transportation-cost
 transportation-cost
 0
 10
-4.11
+2.72
 0.01
 1
 NIL
@@ -323,7 +323,7 @@ synthetic-hierarchy
 synthetic-hierarchy
 0
 2
-1.35
+1.9
 0.05
 1
 NIL

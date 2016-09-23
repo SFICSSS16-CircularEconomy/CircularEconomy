@@ -23,8 +23,8 @@ indics = c("finalTime","nwClustCoef","nwComponents","nwInDegree","nwMeanFlow","n
 
 plotlist = list()
 for(indic in indics){
- g = ggplot(sres,aes_string(x="distribSd",y="gravityDecay",fill=indic))
- plotlist[[indic]]=g+geom_raster(hjust=0,vjust=0)+facet_grid(transportationCost~overlapThreshold,scales = "free")+scale_fill_gradient(low='yellow',high='red')
+ g = ggplot(sres,aes_string(x="overlapThreshold",y="gravityDecay",fill=indic))
+ plotlist[[indic]]=g+geom_raster(hjust=0,vjust=0)+facet_grid(transportationCost~distribSd,scales = "free")+scale_fill_gradient(low='yellow',high='red')
 }
 multiplot(plotlist=plotlist,cols=4)
 
@@ -33,7 +33,7 @@ multiplot(plotlist=plotlist,cols=4)
 
 # Pareto Front
 
-g = ggplot(sres,aes(x=totalWaste,y=totalCost,color=overlapThreshold))
+g = ggplot(sres,aes(x=totalWaste,y=totalCost,color=gravityDecay))
 g+geom_point(size=0.5)+facet_grid(transportationCost~distribSd,scales = "free")
 
 

@@ -1,0 +1,52 @@
+\input{header.tex}
+
+\title{Circular Economy : Core Model Specification
+}
+
+\date{}
+
+\maketitle
+
+\justify
+
+
+\begin{abstract}
+
+\end{abstract}
+
+
+
+
+\section{Model Description}
+
+\textit{The mathematical description given here is assumed to be necessary and sufficient for any implementation of the model. [need to clarify possible implementation bias]}
+
+
+Let agents are $N$ companies indexed by $1\leq i\leq N$, that have a fixed spatial position $\vec{x}_i$. By-products are assumed to be described by a finite-dimensional random variable $\vec{y}\in \mathbb{R}^d$. Finite values are a reasonable domain for by-products characteristics as it allows to normalize along each axis and take $\vec{y} \in \left[0,1\right]^d$. Each company has a demand function and an offer function, which were used to establish links between pairs of companies (i.e. exchange of by-products). These function are defined in a simple manner by $\vec{D}_i (\vec{y})= D_i^{(0)}\cdot \vec{d}_i (\vec{y})$ and $\vec{O}_i (\vec{y})= O_i^{(0)}\cdot \vec{o}_i (\vec{y})$, where $\vec{d}_i$ and $\vec{o}_i$ are multivariate probability densities.
+
+
+\section{Architecture}
+
+\textit{Additional specification / architectural sketch}
+
+
+
+\section{Statistical benchmarks}
+
+\textit{Systematic/statistical comparison of different implementation.}
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+%% Biblio
+%%%%%%%%%%%%%%%%%%%%
+
+%\bibliographystyle{apalike}
+%\bibliography{}
+
+
+\end{document}
