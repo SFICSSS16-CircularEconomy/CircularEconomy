@@ -16,16 +16,19 @@ library(kernlab)
 #     - gridSize : width of the square grid
 #     - N : number of kernels (cities)
 #     - alpha : rank-size scaling parameter
+#
+#
+#   NOT USED YET
 #     - proba = TRUE : return a probability distribution
 #     - rmin = 0 : minimal radius of cities (uniformaly drawn within rmlin,rmax) ; gridSize/N if 0
 #     - rmax = 0 : idem
 #     - Pmax = 1 : population of the greatest city (useful if proba == FALSE)
 #     - tolThreshold : DEPRECATED
 #     - kernel_type = "poisson" : can be "gaussian" (sigma=1/(2*r^2)) or "poisson" (sigma=1/r)
-spatializedExpMixtureDensity <- function(gridSize,N,alpha,proba=TRUE,rmin=0,rmax=0,Pmax=1,tolThreshold=0,kernel_type="poisson"){
+spatializedExpMixtureDensity <- function(gridSize,N,alpha,centerDensity,proba=TRUE,rmin=0,rmax=0,Pmax=1,tolThreshold=0,kernel_type="poisson"){
   
-  if(rmin==0){rmin = gridSize/N}
-  if(rmax==0){rmax = gridSize/N}
+  #if(rmin==0){rmin = gridSize/N}
+  #if(rmax==0){rmax = gridSize/N}
   
   # patches of the grid are 1 unit size (in r_min/max units)
   grid = matrix(0,gridSize,gridSize)
@@ -40,8 +43,10 @@ spatializedExpMixtureDensity <- function(gridSize,N,alpha,proba=TRUE,rmin=0,rmax
   for(i in 1:N){
     show(i)
     pop_i = Pmax*i^{-alpha}
-    r_i = runif(1,min=rmin,max=rmax)
-    d_i = pop_i / (2*pi*(r_i^2))
+    d_i = centerDensity
+    r_i = sqrt(pop_i/(2*pi*d_i))
+    #r_i = runif(1,min=rmin,max=rmax)
+    #d_i = pop_i / (2*pi*(r_i^2))
     
     # find origin of that kernel
     #  -> one of points such that : d(bord) > rcut and \forall \vec{x}\in D(rcut),d(\vec{x})<tolThr.
@@ -55,23 +60,25 @@ spatializedExpMixtureDensity <- function(gridSize,N,alpha,proba=TRUE,rmin=0,rmax
     # simplify : take deterministiquely (almost, after two exps only two points possible)
     # BUT not close to border
     #rbord = 2*rmax*log(Pmax/tolThreshold)
-    rbord = 2*rmax
+    #rbord = 2*rmax
     
     # random center
-    if(max(grid)==0){
-      # random if no center yet
-      center = matrix(runif(2,min=rbord+1,max=gridSize-rbord),nrow=1)
-    }
-    else {
-      # else find min pop area not too close to border
-      pot = which(grid==min(grid[(rbord+1):(gridSize-rbord),(rbord+1):(gridSize-rbord)]),arr.ind=TRUE)
-      row = sample(nrow(pot),1)
-      center = matrix(pot[row,],nrow=1)
-    }
+    # if(max(grid)==0){
+    #   # random if no center yet
+    #   center = matrix(runif(2,min=rbord+1,max=gridSize-rbord),nrow=1)
+    # }
+    # else {
+    #   # else find min pop area not too close to border
+    #   pot = which(grid==min(grid[(rbord+1):(gridSize-rbord),(rbord+1):(gridSize-rbord)]),arr.ind=TRUE)
+    #   row = sample(nrow(pot),1)
+    #   center = matrix(pot[row,],nrow=1)
+    # }
+    
+    center = matrix(runif(2,min=1,max=gridSize),nrow=1)
     
     # add kernel : use kernlab laplace kernel or other
-    if(kernel_type=="poisson"){ker=laplacedot(sigma=1/r_i)}
-    if(kernel_type=="gaussian"){ker=rbfdot(sigma=1/(2*r_i^2))}
+    #if(kernel_type=="poisson"){ker=laplacedot(sigma=1/r_i)}
+    #if(kernel_type=="gaussian"){ker=rbfdot(sigma=1/(2*r_i^2))}
     #if(kernel_type="quadratic"){ker=} # is quad kernel available ?
     
     grid = grid + (d_i * matrix(kernelMatrix(kernel=laplacedot(sigma=1/r_i),x=coords,y=center),nrow=gridSize))
@@ -82,6 +89,18 @@ spatializedExpMixtureDensity <- function(gridSize,N,alpha,proba=TRUE,rmin=0,rmax
   
   return(grid)
 }
+
+
+
+
+# test the function
+#test = spatializedExpMixtureDensity(50,10,0.7,0.05)
+#persp3D(z=test)
+
+
+
+
+
 
 
 ##
@@ -102,11 +121,6 @@ pseudoClosing <- function(mat,rcut){
 }
 
 
-
-# test the function
-test = spatializedExpMixtureDensity(100,20,0.7)
-#persp3D(z=test)
-# -> not disgusting
 
 
 # test the scaling
