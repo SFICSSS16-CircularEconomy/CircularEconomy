@@ -45,6 +45,7 @@ spatializedExpMixtureDensity <- function(gridSize,N,alpha,centerDensity,proba=TR
     pop_i = Pmax*i^{-alpha}
     d_i = centerDensity
     r_i = sqrt(pop_i/(2*pi*d_i))
+    show(r_i)
     #r_i = runif(1,min=rmin,max=rmax)
     #d_i = pop_i / (2*pi*(r_i^2))
     
@@ -94,7 +95,7 @@ spatializedExpMixtureDensity <- function(gridSize,N,alpha,centerDensity,proba=TR
 
 
 # test the function
-#test = spatializedExpMixtureDensity(50,10,0.7,0.05)
+#test = spatializedExpMixtureDensity(50,10,0.7,0.005)
 #persp3D(z=test)
 
 

@@ -37,6 +37,12 @@ g = ggplot(sres,aes(x=totalWaste,y=totalCost,color=gravityDecay))
 g+geom_point(size=0.5)+facet_grid(transportationCost~distribSd,scales = "free")
 
 
+##
+# for particular values of distribSd and tarnsportationCost == fixed "economic context"
+
+
+
+
 ##########
 ## convergence
 
