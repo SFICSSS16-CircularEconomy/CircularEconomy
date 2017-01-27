@@ -81,10 +81,10 @@ g+geom_point(size=2)
 
 ###
 # for diff
-distribSdVal = 0.05
+distribSdVal = 0.55
 transportationCostVal=0.5
 g = ggplot(sres[sres$distribSd==distribSdVal&sres$transportationCost==transportationCostVal,],
-           aes(x=totalWaste,y=totalCost,color=gravityDecay))
+           aes(x=totalWaste,y=totalCost,color=overlapThreshold))
 g+geom_point(size=2)+ggtitle(paste0('distribSd=',distribSdVal,' ; transportationCost=',transportationCostVal))
 
 

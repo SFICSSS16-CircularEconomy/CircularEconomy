@@ -1,5 +1,5 @@
 
-extensions [nw gis]
+extensions [nw gis gradient]
 
 
 __includes [
