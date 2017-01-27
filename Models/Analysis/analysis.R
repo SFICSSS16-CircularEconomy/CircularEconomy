@@ -79,13 +79,19 @@ g = ggplot(sres[sres$distribSd==0.25&sres$transportationCost==1,],
            aes(x=totalWaste,y=totalCost,color=gravityDecay))
 g+geom_point(size=2)
 
+
+
 ###
 # for diff
 distribSdVal = 0.55
 transportationCostVal=0.5
-g = ggplot(sres[sres$distribSd==distribSdVal&sres$transportationCost==transportationCostVal,],
-           aes(x=totalWaste,y=totalCost,color=overlapThreshold))
-g+geom_point(size=2)+ggtitle(paste0('distribSd=',distribSdVal,' ; transportationCost=',transportationCostVal))
+g = ggplot(sressynth[sressynth$distribSd==distribSdVal&sressynth$transportationCost==transportationCostVal,],
+           aes(x=totalWaste,y=totalCost,color=overlapThreshold,size=gravityDecay))
+g+geom_point()+scale_size_area(max_size = 2)+ggtitle(paste0('Uniform ; distribSd=',distribSdVal,' ; transportationCost=',transportationCostVal))
+
+g = ggplot(sresgis[sresgis$distribSd==distribSdVal&sresgis$transportationCost==transportationCostVal,],
+           aes(x=totalWaste,y=totalCost,color=overlapThreshold,size=gravityDecay))
+g+geom_point()+scale_size_area(max_size = 2)+ggtitle(paste0('GIS ; distribSd=',distribSdVal,' ; transportationCost=',transportationCostVal))
 
 
 
