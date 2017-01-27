@@ -24,7 +24,7 @@ to setup
   
   setup-companies
   
-  color-patches
+  ;color-patches
   
   reset-ticks
 end
