@@ -149,7 +149,7 @@ SLIDER
 #-cities
 0
 10
-7
+5
 1
 1
 NIL
@@ -323,7 +323,7 @@ synthetic-hierarchy
 synthetic-hierarchy
 0
 2
-1.9
+1.1
 0.05
 1
 NIL

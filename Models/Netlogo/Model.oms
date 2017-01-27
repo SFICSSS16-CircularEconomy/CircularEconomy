@@ -8,6 +8,7 @@ val transportationCost = Val[Double]
 // indicators
 val totalWaste = Val[Double]
 val totalCost = Val[Double]
+val relativeCost = Val[Double]
 val finalTime = Val[Double]
 val nwComponents = Val[Double]
 val nwCentrality = Val[Double]
@@ -29,6 +30,7 @@ NetLogo5Task.workspace(workDirectory,"HEADLESS_circeco.nlogo",cmds) set(
     outputs += (gravityDecay,distribSd,overlapThreshold,transportationCost),
     netLogoOutputs += ("total-waste", totalWaste),
     netLogoOutputs += ("total-cost", totalCost),
+    netLogoOutputs += ("relative-cost", relativeCost),
     netLogoOutputs += ("final-time", finalTime),
     netLogoOutputs += ("network-components", nwComponents),
     //netLogoOutputs += ("network-centrality", nwCentrality),
@@ -37,5 +39,3 @@ NetLogo5Task.workspace(workDirectory,"HEADLESS_circeco.nlogo",cmds) set(
     netLogoOutputs += ("network-mean-flow", nwMeanFlow),
     netLogoOutputs += ("network-clustering-coeficient", nwClustCoef)
 )
-  
-  

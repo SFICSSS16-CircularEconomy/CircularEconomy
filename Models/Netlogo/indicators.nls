@@ -36,9 +36,9 @@ end
 
 
 ;;
-; total waste accross all companies
+; total waste accross all companies ; normalized by company number
 to-report total-waste
-  report sum [sum output-distribution] of companies
+  report sum [sum output-distribution] of companies / count companies
 end
 
 
@@ -51,6 +51,13 @@ end
 ;  for now : transportation cost
 to-report total-cost
   report sum [transportation-cost * weight * link-length / (sqrt (world-width ^ 2 + world-height ^ 2))] of flows
+end
+
+
+;;
+; cost normalized by transportation cost
+to-report relative-cost
+  report sum [weight * link-length / (sqrt (world-width ^ 2 + world-height ^ 2))] of flows
 end
 
 
