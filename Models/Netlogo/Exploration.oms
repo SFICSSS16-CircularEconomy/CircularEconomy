@@ -20,7 +20,7 @@ val exploration = ExplorationTask(
   x (replication in UniformDistribution[Int]() take 50)
 )
 //val purpose = "test"
-val purpose = "grid_synthetic"
+val purpose = "grid_gis"
 
 val eval = exploration -< model
 
