@@ -21,7 +21,9 @@ val id = Val[Int]
 val replication = Val[Int]
 
 // setup-experiment [t distribution-sd gravity-decay overlap-threshold transport-cost]
-val cmds = Seq("setup-experiment \"synthetic-city-system\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost}","run-experiment")
+//val cmds = Seq("setup-experiment \"synthetic-city-system\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost}","run-experiment")
+val cmds = Seq("setup-experiment \"gis\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost}","run-experiment")
+
 
 val model =
 //NetLogo5Task.workspace("HEADLESS_circeco.nlogo",cmds,replication)set(//embedWorkspace=true) set (

@@ -170,11 +170,11 @@ length(which(getParetoFront(pareto$totalCost,pareto$totalWaste)))
 transportationCosts=c()
 distribSds=c()
 paretosizes=c()
-for(transportationCostVal in unique(sresgis$transportationCost[sresgis$transportationCost>0])){
-  for(distribSdVal in unique(sresgis$distribSd)){
+for(transportationCostVal in unique(sressynth$transportationCost[sressynth$transportationCost>0])){
+  for(distribSdVal in unique(sressynth$distribSd)){
     show(paste0(transportationCostVal,distribSdVal))
-    pareto = sresgis[sresgis$distribSd==distribSdVal&sresgis$transportationCost==transportationCostVal,]
-    #pareto = sressynth[sressynth$distribSd==distribSdVal&sressynth$transportationCost==transportationCostVal,]
+    #pareto = sresgis[sresgis$distribSd==distribSdVal&sresgis$transportationCost==transportationCostVal,]
+    pareto = sressynth[sressynth$distribSd==distribSdVal&sressynth$transportationCost==transportationCostVal,]
     #pareto = ressynth[ressynth$distribSd==distribSdVal&ressynth$transportationCost==transportationCostVal,]
     paretosizes=append(paretosizes,length(which(getParetoFront(pareto$totalCost,pareto$totalWaste)))/nrow(pareto))
     transportationCosts=append(transportationCosts,transportationCostVal)
