@@ -107,7 +107,7 @@ GRAPHICS-WINDOW
 382
 20
 997
-536
+436
 -1
 -1
 5.0
@@ -123,7 +123,7 @@ GRAPHICS-WINDOW
 0
 120
 0
-96
+76
 0
 0
 1
@@ -138,7 +138,7 @@ CHOOSER
 setup-type
 setup-type
 "synthetic-city-system" "uniform" "gis"
-0
+2
 
 SLIDER
 5
@@ -164,7 +164,7 @@ city-radius
 city-radius
 0
 50
-6
+10
 1
 1
 NIL
@@ -323,7 +323,7 @@ synthetic-hierarchy
 synthetic-hierarchy
 0
 2
-1.1
+1.05
 0.05
 1
 NIL

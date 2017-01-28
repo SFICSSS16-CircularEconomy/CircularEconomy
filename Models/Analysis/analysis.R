@@ -5,9 +5,12 @@ library(ggplot2)
 setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/CircularEconomy/Results/Exploration'))
 source(paste0(Sys.getenv("CN_HOME"),'/Models/Utils/R/plots.R'))
 
-ressynth <- as.tbl(read.csv('20160701_gridlocal/2016_07_01_07_18_26_grid_local.csv'))
+#ressynth <- as.tbl(read.csv('20160701_gridlocal/2016_07_01_07_18_26_grid_local.csv'))
+ressynth <- as.tbl(read.csv('20170127_grid_synthetic/2017_01_27_18_38_23_grid_synthetic.csv'))
 resgis <- as.tbl(read.csv('20160706_grid_gis/2016_07_06_08_36_31_grid_gis_corrected.csv'))
 #res=res[res$finalTime!="null"&res$nwClustCoef!="null"&res$nwComponents!="null"&res$nwInDegree!="null"&res$nwClustCoef!="null"&res$nwOutDegree!="null"&res$totalCost!="null"&res$totalWaste!="null",]
+
+synthresprefix = '20170127_grid_synthetic'
 
 sressynth = ressynth %>% group_by(distribSd,gravityDecay,overlapThreshold,transportationCost)%>% summarise(
   finalTime = mean(finalTime),nwClustCoef=mean(nwClustCoef),nwComponents=mean(nwComponents),
@@ -17,7 +20,15 @@ sressynth = ressynth %>% group_by(distribSd,gravityDecay,overlapThreshold,transp
   #distribSd=mean(distribSd),overlapThreshold=mean(overlapThreshold)
 )
 
-sresgis = res %>% group_by(distribSd,gravityDecay,overlapThreshold,transportationCost)%>% summarise(
+sressynthmed = ressynth %>% group_by(distribSd,gravityDecay,overlapThreshold,transportationCost)%>% summarise(
+  finalTime = mean(finalTime),nwClustCoef=mean(nwClustCoef),nwComponents=mean(nwComponents),
+  nwInDegree=mean(nwInDegree),nwMeanFlow=mean(nwMeanFlow),nwOutDegree=mean(nwOutDegree),
+  totalCost=quantile(as.numeric(totalCost),0.5),totalWaste=quantile(totalWaste,0.5),count=n()#,
+  #transportationCost=mean(transportationCost),gravityDecay=mean(gravityDecay),
+  #distribSd=mean(distribSd),overlapThreshold=mean(overlapThreshold)
+)
+
+sresgis = resgis %>% group_by(distribSd,gravityDecay,overlapThreshold,transportationCost)%>% summarise(
   finalTime = mean(finalTime),nwClustCoef=mean(nwClustCoef),nwComponents=mean(nwComponents),
   nwInDegree=mean(nwInDegree),nwMeanFlow=mean(nwMeanFlow),nwOutDegree=mean(nwOutDegree),
   totalCost=mean(as.numeric(totalCost)),totalWaste=mean(totalWaste),count=n()#,
@@ -83,15 +94,31 @@ g+geom_point(size=2)
 
 ###
 # for diff
-distribSdVal = 0.55
+distribSdVal = 0.6
 transportationCostVal=0.5
-g = ggplot(sressynth[sressynth$distribSd==distribSdVal&sressynth$transportationCost==transportationCostVal,],
-           aes(x=totalWaste,y=totalCost,color=overlapThreshold,size=gravityDecay))
-g+geom_point()+scale_size_area(max_size = 2)+ggtitle(paste0('Uniform ; distribSd=',distribSdVal,' ; transportationCost=',transportationCostVal))
+
+for(distribSdVal in unique(sressynth$distribSd)){
+  for(transportationCostVal in unique(sressynth$transportationCost)){
+    g = ggplot(sressynth[sressynth$distribSd==distribSdVal&sressynth$transportationCost==transportationCostVal,],
+               aes(x=totalWaste,y=totalCost,color=overlapThreshold,size=gravityDecay))
+    g+geom_point()+scale_size_area(max_size = 2)+ggtitle(paste0('Uniform ; distribSd=',distribSdVal,' ; transportationCost=',transportationCostVal))
+    ggsave(paste0(synthresprefix,'/pareto_distribSd',distribSdVal,'_trCost',transportationCostVal,'.pdf'),width = 8,height = 6) 
+  }
+}
+  
+
+
+
 
 g = ggplot(sresgis[sresgis$distribSd==distribSdVal&sresgis$transportationCost==transportationCostVal,],
            aes(x=totalWaste,y=totalCost,color=overlapThreshold,size=gravityDecay))
 g+geom_point()+scale_size_area(max_size = 2)+ggtitle(paste0('GIS ; distribSd=',distribSdVal,' ; transportationCost=',transportationCostVal))
+
+
+g = ggplot(resgis[resgis$distribSd==distribSdVal&resgis$transportationCost==transportationCostVal,],
+           aes(x=totalWaste,y=totalCost,color=overlapThreshold,size=gravityDecay))
+g+geom_point()+geom_smooth()+scale_size_area(max_size = 2)+ggtitle(paste0('GIS ; distribSd=',distribSdVal,' ; transportationCost=',transportationCostVal))
+
 
 
 
@@ -119,3 +146,45 @@ for(indic in c("totalWaste","nwInDegree")){
   plotlist[[indic]]=g+geom_density(aes_string(x=indic,fill="id",group="id"),alpha=0.4)
 }
 multiplot(plotlist=plotlist,cols=2)
+
+
+
+##########
+## Pareto score
+
+getParetoFront <- function(o1,o2){
+  dominated = rep(FALSE,length(o1))
+  for(i in 1:length(o1)){
+    if(!dominated[i]){
+      dominated[o1[i]<o1&o2[i]<o2] = TRUE
+    }
+  }
+  return(!dominated)
+}
+
+distribSdVal = 0.55
+transportationCostVal=0.0
+pareto = sresgis[sresgis$distribSd==distribSdVal&sresgis$transportationCost==transportationCostVal,]
+length(which(getParetoFront(pareto$totalCost,pareto$totalWaste)))
+
+transportationCosts=c()
+distribSds=c()
+paretosizes=c()
+for(transportationCostVal in unique(sresgis$transportationCost[sresgis$transportationCost>0])){
+  for(distribSdVal in unique(sresgis$distribSd)){
+    show(paste0(transportationCostVal,distribSdVal))
+    pareto = sresgis[sresgis$distribSd==distribSdVal&sresgis$transportationCost==transportationCostVal,]
+    #pareto = sressynth[sressynth$distribSd==distribSdVal&sressynth$transportationCost==transportationCostVal,]
+    #pareto = ressynth[ressynth$distribSd==distribSdVal&ressynth$transportationCost==transportationCostVal,]
+    paretosizes=append(paretosizes,length(which(getParetoFront(pareto$totalCost,pareto$totalWaste)))/nrow(pareto))
+    transportationCosts=append(transportationCosts,transportationCostVal)
+    distribSds=append(distribSds,distribSdVal)
+  }
+}
+
+g=ggplot(data.frame(paretosizes,transportationCost=transportationCosts,distribSd=distribSds),aes(x=transportationCost,y=paretosizes,color=distribSd))
+g+geom_point()+geom_smooth()
+
+g=ggplot(data.frame(paretosizes,transportationCost=transportationCosts,distribSd=distribSds),aes(x=distribSd,y=paretosizes,color=transportationCost))
+g+geom_point()+geom_smooth()
+

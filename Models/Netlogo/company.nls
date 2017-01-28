@@ -40,7 +40,11 @@ end
 ; establish a link between two companies
 to make-trade [seller buyer]
   ; make the link
-  ask seller [if current-output-overlap = 0 [inspect self inspect buyer let x user-yes-or-no? ""] create-flow-to buyer [set weight [current-output-overlap] of myself set color blue set thickness weight / 3]]
+  ask seller [if current-output-overlap = 0 [inspect self inspect buyer let x user-yes-or-no? ""]
+      create-flow-to buyer [
+        set weight [current-output-overlap] of myself new-flow
+      ]
+  ]
   set traded-quantity [current-output-overlap] of seller
   ; adapt distributions
   let prev-output [output-distribution] of seller
@@ -52,9 +56,10 @@ end
 
 
 
-
+;;
+; company constructor
 to new-company
-  set shape "circle" set size 1 set color blue
+  set shape "circle" set size 1.5 set color lime
   
   ; input-output params
   ;set input-mean random-float 1 set output-mean random-float 1
@@ -63,6 +68,15 @@ to new-company
   set output-distribution company-distribution
   
 end
+
+
+;;
+; flow constructor
+to new-flow
+   set color lime set thickness weight / 2
+end
+
+
 
 
 ;;

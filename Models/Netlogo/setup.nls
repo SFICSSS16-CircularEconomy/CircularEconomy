@@ -24,7 +24,7 @@ to setup
   
   setup-companies
   
-  ;color-patches
+  color-patches
   
   reset-ticks
 end
@@ -48,13 +48,13 @@ end
 
 to setup-gis
   let dataset gis:load-dataset (word density-file ".asc")
-  resize-world 0 gis:width-of dataset 0 gis:height-of dataset set-patch-size floor (600 / gis:width-of dataset)
-  gis:set-world-envelope gis:envelope-of dataset
+  resize-world 0 (gis:width-of dataset) 0 (gis:height-of dataset) set-patch-size floor (600 / gis:width-of dataset)
+  gis:set-world-envelope gis:envelope-of gis:load-dataset (word density-file "_extent.shp")
   gis:apply-raster dataset density
   ask patches [if not (density >= 0)[set density 0]]
   let stot sum [density] of patches
   ask patches [set density density / stot]
-  gis:set-drawing-color yellow
+  gis:set-drawing-color brown
   gis:draw gis:load-dataset (word density-file ".shp") 1
 end
 
@@ -71,7 +71,7 @@ to generate-synthetic-density
   ; P_i = Pmax / i ^ \alpha - with Pmax= 1, P_i = 1/i^alpha ; total pop for one kernel : P = 1/i^alpha = 2*pi*r_i
   let i 1
   repeat #-cities [
-    apply-poisson-kernel city-radius / (i ^ (synthetic-hierarchy - 1)) 1 "density" (one-of patches)
+    apply-poisson-kernel city-radius / (i ^ (synthetic-hierarchy - 1)) 1 "density" (one-of patches with [pxcor > min-pxcor + 10 and pxcor < max-pxcor - 10 and pycor > min-pycor + 10 and pycor < max-pycor - 10])
     set i i + 1
   ]
   let stot sum [density] of patches
