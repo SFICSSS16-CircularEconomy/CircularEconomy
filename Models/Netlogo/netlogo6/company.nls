@@ -1,0 +1,135 @@
+
+;; companies
+
+
+;;
+;  draw the currently prospecting company
+to-report get-prospecting-company
+  report one-of companies with-min [count link-neighbors]
+end
+
+
+;;
+; get potential partners of a company
+;  does both distance drawing and threshol rule
+to-report get-potential-partners
+   ; get potential partners
+   let potential-partners []
+   ; distance interaction potential
+   ; V_ij ~ 1/d_ij ^alpha ? easier with exp potential : |P(i->j) = exp(-d_ij/d_0)
+   ask other companies [
+     if random-float 1 < exp (- distance myself / interaction-decay) [set potential-partners lput self potential-partners]
+   ]
+   
+   let res []
+   ; threshold rule
+   ; -> here already compute overlaps for potential partners
+   ask other companies [
+     set current-input-overlap distribution-overlap [output-distribution] of myself input-distribution
+     set current-output-overlap distribution-overlap [input-distribution] of myself output-distribution 
+     if current-input-overlap > bargain-threshold or current-output-overlap > bargain-threshold [
+       set res lput self res
+     ]
+   ]
+    
+   report to-agentset res
+end
+
+
+;;
+; establish a link between two companies
+to make-trade [seller buyer]
+  ; make the link
+  ask seller [if current-output-overlap = 0 [inspect self inspect buyer let x user-yes-or-no? ""]
+      create-flow-to buyer [
+        set weight [current-output-overlap] of myself new-flow
+      ]
+  ]
+  set traded-quantity [current-output-overlap] of seller
+  ; adapt distributions
+  let prev-output [output-distribution] of seller
+  ask seller [set output-distribution remaining-distribution output-distribution [input-distribution] of buyer]
+  ask buyer [set input-distribution remaining-distribution input-distribution prev-output]
+end
+
+
+
+
+
+;;
+; company constructor
+to new-company
+  set shape "circle" set size 1.5 set color lime
+  
+  ; input-output params
+  ;set input-mean random-float 1 set output-mean random-float 1
+  
+  set input-distribution company-distribution
+  set output-distribution company-distribution
+  
+end
+
+
+;;
+; flow constructor
+to new-flow
+   set color lime set thickness weight / 2
+end
+
+
+
+
+;;
+;
+to-report company-distribution
+  ; for now probability distributions
+  
+  
+  ; TODO : draw from a poisson - and then put the mean in the utility - also the transportation cost should depend on overlap (== quantity of product to transport)
+  
+  
+  if distrib-type = "uniform-mean-gaussian" [
+    ; try it dirtily by sampling a gaussian ? -> can it change something by adding some noise in the distrib
+    let distrib rep 0 distrib-discretization-step
+     
+    let distrib-mean (distrib-var * distrib-discretization-step) + ((random-float distrib-discretization-step) - (2 * distrib-var * distrib-discretization-step))
+    
+    repeat distrib-bootstrap-step [
+      let val min list (distrib-discretization-step - 1) (max list 0 (floor (random-normal distrib-mean (distrib-var * distrib-discretization-step))))
+      set distrib replace-item val distrib ((item val distrib) + 1)
+    ]
+    
+    let m sum distrib set distrib map [d -> d / m] distrib
+    report distrib
+  ]
+  
+  ; by default report a uniform distrib
+  report rep (1 / distrib-discretization-step) distrib-discretization-step
+end
+
+
+;;
+; overlap of two distributions 
+;  -> sum min d1,d2
+to-report distribution-overlap [d1 d2]
+  let m [] let i 0
+  foreach d1 [
+    d ->
+      set m lput (min list d item i d2) m set i i + 1
+  ]
+  report sum m
+end 
+
+to-report remaining-distribution [d1 d2]
+  let res d1 let i 0
+  foreach d1 [
+    d ->
+      set res replace-item i res (d - (min list d item i d2)) set i i + 1
+  ]
+  report res
+end
+
+
+
+
+
