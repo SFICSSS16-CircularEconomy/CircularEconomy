@@ -3,71 +3,71 @@ extensions [nw gis]
 
 
 __includes [
-  
+
   ;; setup
-  "setup.nls" 
-  
+  "setup.nls"
+
   ;; main
   "main.nls"
-  
+
   ;; agents
   "company.nls"
   "utility.nls"
-  
+
   ;; indicators
   "indicators.nls"
-  
+
   ;; display
   "display.nls"
-  
-  
+
+
   ;; experiment
   "experiments.nls"
-  
+
   ;;;;;;;;;;;
   ;; utils
-  
+
   "utils/SpatialKernels.nls"
   "utils/List.nls"
-  
-  
-  
+
+
+
 ]
 
 
 
 globals [
-  
+
   ;;;;;;;;;;
   ; setup
-  
+
   ; synthetic
   ;synthetic-hierarchy
-  
+
   ; distrib discretization
   distrib-discretization-step
-  
+
   ; for bootstrapped distribution, number of step needed
   distrib-bootstrap-step
-  
+
   ;;;;;;;;;;
   ; runtime
-  
-  ; the currently prospecting company 
+
+  ; the currently prospecting company
   prospecting-company
-  
+
   traded-quantity
-  
+
   ; list of time-series of cumulated waste
   waste-history
-   
-  
-   
+
+
+
   ;;;;;;;;;;;;
   ;; Headless
 
   headless?
-   
+
   setup-type
   #-cities
   city-radius
@@ -78,53 +78,53 @@ globals [
   interaction-decay
   bargain-threshold
   transportation-cost
-   
+
   density-file
   density-exponent
-   
+
 ]
 
 
 
 patches-own [
   density
-]  
+]
 
 
 
 breed [companies company]
 
 companies-own[
-  
+
   ;;
   ; Input and ouput distributions
   ;    coded as distretized [0;1]
   input-distribution
   output-distribution
-   
+
   ;; current input and output overlaps (with current prospecting company)
   ; input against output of current comp
   current-input-overlap
   ; output against input of current
   current-output-overlap
-  
+
   ; idem with utilities
   current-input-utility
   current-output-utility
-   
+
 ]
 
 directed-link-breed [flows flow]
 
 flows-own [
-  weight 
+  weight
 ]
 @#$#@#$#@
 GRAPHICS-WINDOW
 382
 20
-997
-536
+995
+514
 -1
 -1
 5.0
@@ -488,9 +488,8 @@ false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
-
 @#$#@#$#@
-NetLogo 5.1.0
+NetLogo 6.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -506,7 +505,6 @@ true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 0
 @#$#@#$#@

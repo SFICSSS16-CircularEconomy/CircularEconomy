@@ -17,17 +17,18 @@ val nwOutDegree = Val[Double]
 val nwMeanFlow = Val[Double]
 val nwClustCoef = Val[Double]
 
+val setupType = Val[String]
+
 val id = Val[Int]
 val replication = Val[Int]
 
 // setup-experiment [t distribution-sd gravity-decay overlap-threshold transport-cost]
 //val cmds = Seq("setup-experiment \"synthetic-city-system\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost}","run-experiment")
-val cmds = Seq("setup-experiment \"gis\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost}","run-experiment")
-
+//val cmds = Seq("setup-experiment \"gis\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost}","run-experiment")
+val cmds = Seq("setup-experiment \"${setupType}\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost}","run-experiment")
 
 val model =
-//NetLogo5Task.workspace("HEADLESS_circeco.nlogo",cmds,replication)set(//embedWorkspace=true) set (
-NetLogo5Task.workspace(workDirectory,"HEADLESS_circeco.nlogo",cmds) set(
+NetLogo6Task(workDirectory / "model/netlogo6/HEADLESS_circeco.nlogo",cmds,embedWorkspace=true) set(
     inputs += (gravityDecay,distribSd,overlapThreshold,transportationCost),
     outputs += (gravityDecay,distribSd,overlapThreshold,transportationCost),
     netLogoOutputs += ("total-waste", totalWaste),
