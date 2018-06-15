@@ -3,7 +3,8 @@
 
 
 
-;; RQ : variable names are horrible, need to unify that.
+;;
+;
 to setup-experiment [t distribution-sd gravity-decay overlap-threshold transport-cost]
   
   ; setup vars
@@ -38,4 +39,10 @@ to run-experiment
     if stop-criteria? [stop] 
   ]
   setup-indicators
+end
+
+
+to test-experiment
+  setup-experiment "synthetic-city-system" 0.1 20 0.1 1.0
+  run-experiment
 end
