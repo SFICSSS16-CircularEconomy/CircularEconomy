@@ -1,5 +1,4 @@
-
-extensions [nw gis]
+extensions [nw gis palette]
 
 
 __includes [
@@ -50,6 +49,8 @@ globals [
   ; for bootstrapped distribution, number of step needed
   distrib-bootstrap-step
 
+  dmax
+
   ;;;;;;;;;;
   ; runtime
 
@@ -79,6 +80,8 @@ globals [
   bargain-threshold
   transportation-cost
 
+  average-distance-variability
+
   density-file
   density-exponent
 
@@ -102,6 +105,8 @@ companies-own[
   input-distribution
   output-distribution
 
+  distrib-mean
+
   ;; current input and output overlaps (with current prospecting company)
   ; input against output of current comp
   current-input-overlap
@@ -113,6 +118,15 @@ companies-own[
   current-output-utility
 
 ]
+
+
+breed [centers center]
+
+centers-own [
+ distribution-average
+]
+
+
 
 directed-link-breed [flows flow]
 

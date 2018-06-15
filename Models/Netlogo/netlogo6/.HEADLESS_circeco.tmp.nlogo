@@ -20,7 +20,7 @@ __includes [
   "display.nls"
 
 
-  ;; experiments
+  ;; experiment
   "experiments.nls"
 
   ;;;;;;;;;;;
@@ -28,7 +28,7 @@ __includes [
 
   "utils/SpatialKernels.nls"
   "utils/List.nls"
-  "utils/Statistics.nls"
+
 
 
 ]
@@ -49,6 +49,8 @@ globals [
   ; for bootstrapped distribution, number of step needed
   distrib-bootstrap-step
 
+  dmax
+
   ;;;;;;;;;;
   ; runtime
 
@@ -60,8 +62,28 @@ globals [
   ; list of time-series of cumulated waste
   waste-history
 
-  ; headless
+
+
+  ;;;;;;;;;;;;
+  ;; Headless
+
   headless?
+
+  setup-type
+  #-cities
+  city-radius
+  synthetic-hierarchy
+  distrib-type
+  distrib-var
+  #-companies
+  interaction-decay
+  bargain-threshold
+  transportation-cost
+
+  average-distance-variability
+
+  density-file
+  density-exponent
 
 ]
 
@@ -83,6 +105,7 @@ companies-own[
   input-distribution
   output-distribution
 
+  distrib-mean
 
   ;; current input and output overlaps (with current prospecting company)
   ; input against output of current comp
@@ -95,6 +118,15 @@ companies-own[
   current-output-utility
 
 ]
+
+
+breed [centers center]
+
+centers-own [
+ distribution-average
+]
+
+
 
 directed-link-breed [flows flow]
 
@@ -128,338 +160,6 @@ GRAPHICS-WINDOW
 1
 ticks
 30.0
-
-CHOOSER
-4
-25
-189
-70
-setup-type
-setup-type
-"synthetic-city-system" "uniform" "gis"
-0
-
-SLIDER
-5
-73
-97
-106
-#-cities
-#-cities
-0
-10
-5.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-99
-72
-196
-105
-city-radius
-city-radius
-0
-50
-5.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-205
-178
-320
-211
-#-companies
-#-companies
-0
-100
-50.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-7
-202
-174
-235
-distrib-var
-distrib-var
-0
-1
-0.1
-0.01
-1
-NIL
-HORIZONTAL
-
-BUTTON
-257
-481
-320
-514
-setup
-ca\nsetup
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-CHOOSER
-7
-155
-174
-200
-distrib-type
-distrib-type
-"uniform-mean-gaussian"
-0
-
-SLIDER
-12
-321
-184
-354
-interaction-decay
-interaction-decay
-0
-100
-1.0E-4
-0.0001
-1
-NIL
-HORIZONTAL
-
-SLIDER
-12
-358
-184
-391
-bargain-threshold
-bargain-threshold
-0
-1
-0.1
-0.01
-1
-NIL
-HORIZONTAL
-
-SLIDER
-11
-395
-184
-428
-transportation-cost
-transportation-cost
-0
-10
-1.0
-0.01
-1
-NIL
-HORIZONTAL
-
-BUTTON
-257
-525
-320
-558
-NIL
-go
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-0
-
-OUTPUT
-1016
-459
-1394
-793
-10
-
-PLOT
-1016
-21
-1280
-213
-waste
-time
-total waste
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "plot total-waste"
-
-SLIDER
-4
-108
-161
-141
-synthetic-hierarchy
-synthetic-hierarchy
-0
-2
-1.3
-0.05
-1
-NIL
-HORIZONTAL
-
-TEXTBOX
-7
-248
-382
-266
------------------------------------------------------------
-11
-0.0
-1
-
-TEXTBOX
-11
-10
-161
-28
-SETUP
-11
-0.0
-1
-
-TEXTBOX
-5
-258
-155
-276
-RUNTIME
-11
-0.0
-1
-
-TEXTBOX
-16
-301
-166
-319
-Parameters
-11
-0.0
-1
-
-TEXTBOX
-14
-512
-164
-530
-Options
-11
-0.0
-1
-
-MONITOR
-1015
-402
-1089
-447
-NIL
-total-waste
-17
-1
-11
-
-PLOT
-1016
-216
-1279
-389
-cost
-time
-cost
-0.0
-10.0
-0.0
-1.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "plot total-cost"
-
-MONITOR
-1096
-402
-1160
-447
-NIL
-total-cost
-17
-1
-11
-
-BUTTON
-1198
-410
-1326
-443
-NIL
-compute-indicators
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-INPUTBOX
-199
-10
-305
-70
-density-file
-data/nld
-1
-0
-String
-
-SLIDER
-183
-107
-328
-140
-density-exponent
-density-exponent
-0
-3
-1.5
-0.1
-1
-NIL
-HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?

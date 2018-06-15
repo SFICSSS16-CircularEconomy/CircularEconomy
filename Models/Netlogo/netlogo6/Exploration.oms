@@ -1,33 +1,84 @@
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import Model._
+logger.level("FINE")
 
-//gravityDecay,distribSd,overlapThreshold,transportationCost
-val exploration = ExplorationTask(
-  (((gravityDecay in (10.0 to 90.0 by 15.0)) x
-  (distribSd in (0.1 to 0.6 by 0.5)) x
-  (overlapThreshold in (0.0 to 0.5 by 0.025)) x
-  (transportationCost in (0.5 to 3.6 by 3.0))
-  ) withIndex id )
-  /*(LHS(
-    1,
-    gravityDecay in Range(0.0,100.0),
-    distribSd in Range(0.01,0.5),
-    overlapThreshold in Range(0.0,0.5),
-    transportationCost in Range(0.05,10.0)
-  ) withIndex id)*/
-  x (replication in UniformDistribution[Int]() take 50)
+// variables
+val gravityDecay = Val[Double]
+val distribSd = Val[Double]
+val overlapThreshold = Val[Double]
+val transportationCost = Val[Double]
+val averageDistanceVariability = Val[Double]
+
+// indicators
+val totalWaste = Val[Double]
+val totalCost = Val[Double]
+val relativeCost = Val[Double]
+val finalTime = Val[Double]
+val nwComponents = Val[Double]
+val nwCentrality = Val[Double]
+val nwInDegree = Val[Double]
+val nwOutDegree = Val[Double]
+val nwMeanFlow = Val[Double]
+val nwClustCoef = Val[Double]
+
+//val setupType = Val[String]
+
+val id = Val[Int]
+val replication = Val[Int]
+
+// setup-experiment [t distribution-sd gravity-decay overlap-threshold transport-cost average-distance-variability]
+//val cmds = Seq("setup-experiment \"synthetic-city-system\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost}","run-experiment")
+//val cmds = Seq("setup-experiment \"gis\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost}","run-experiment")
+val cmds = Seq("setup-experiment \"synthetic-city-system\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost} ${averageDistanceVariability}","run-experiment")
+
+val model = NetLogo6Task(workDirectory / "HEADLESS_circeco.nlogo",cmds,embedWorkspace=true) set(
+    inputs += (gravityDecay,distribSd,overlapThreshold,transportationCost,averageDistanceVariability),
+    outputs += (gravityDecay,distribSd,overlapThreshold,transportationCost,averageDistanceVariability),
+    netLogoOutputs += ("total-waste", totalWaste),
+    netLogoOutputs += ("total-cost", totalCost),
+    netLogoOutputs += ("relative-cost", relativeCost),
+    netLogoOutputs += ("final-time", finalTime),
+    netLogoOutputs += ("network-components", nwComponents),
+    netLogoOutputs += ("network-in-degree", nwInDegree),
+    netLogoOutputs += ("network-out-degree", nwOutDegree),
+    netLogoOutputs += ("network-mean-flow", nwMeanFlow),
+    netLogoOutputs += ("network-clustering-coeficient", nwClustCoef)
 )
-//val purpose = "test"
-val purpose = "grid_gis"
 
-val eval = exploration -< model
 
-val indics_hook = AppendToCSVFileHook(workDirectory / "res" / "exploration" / ((new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")).format(new Date()))+"_"+purpose+".csv")
+//val purpose = "DIRECTSAMPLING_SYNTHETIC"
+val purpose = "TEST"
 
-val local = LocalEnvironment(60)
-//val grid = DIRACEnvironment("vo.complex-systems.eu")
+val indics_hook = AppendToCSVFileHook(workDirectory / "exploration" / ((new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")).format(new Date()))+"_"+purpose+".csv")
 
-//exploration -< (model on grid by 300 hook indics_hook)
-exploration -< (model on local hook indics_hook)
+//val env = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 2000 megabytes)
+
+val replications =
+ Replication (
+   //evaluation = (model on env by 200 hook indics_hook),
+   evaluation = (model on env hook indics_hook),
+   seed = replication,
+   replications = 100
+)
+
+val exploration =
+  DirectSampling(
+    evaluation = replications,
+    sampling = (
+      /*((gravityDecay in (10.0 to 90.0 by 20.0)) x
+      (distribSd in (0.1 to 0.6 by 0.5)) x
+      (overlapThreshold in (0.0 to 0.5 by 0.025)) x
+      (transportationCost in (0.5 to 3.6 by 3.0)) x
+      (averageDistanceVariability in (0.0 to 20.0 by 1.0)))*/
+      LHS(1,
+        distribSd in Range(0.1,0.6),
+        overlapThreshold in Range(0.0,0.5),
+        transportationCost in Range(0.5,3.0),
+        averageDistanceVariability in Range(0.0,20.0)
+      )
+         withIndex id )
+  )
+
+
+exploration

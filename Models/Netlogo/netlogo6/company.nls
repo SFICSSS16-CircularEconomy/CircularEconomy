@@ -71,6 +71,8 @@ to new-company
   set input-distribution company-distribution
   set output-distribution company-distribution
   
+  set color palette:scale-gradient [[50 50 255] [50 255 50]] distrib-mean 0 distrib-discretization-step
+  
 end
 
 
@@ -92,20 +94,30 @@ to-report company-distribution
   ; TODO : draw from a poisson - and then put the mean in the utility - also the transportation cost should depend on overlap (== quantity of product to transport)
   
   
-  if distrib-type = "uniform-mean-gaussian" [
+  if distrib-type = "uniform-mean-gaussian" or distrib-type = "closest-center-mean-gaussian" [
     ; try it dirtily by sampling a gaussian ? -> can it change something by adding some noise in the distrib
-    let distrib rep 0 distrib-discretization-step
-     
-    let distrib-mean (distrib-var * distrib-discretization-step) + ((random-float distrib-discretization-step) - (2 * distrib-var * distrib-discretization-step))
+    let distrib rep 0 (floor distrib-discretization-step * 1.2)
+    
+    if distrib-type = "uniform-mean-gaussian" [set distrib-mean (distrib-var * distrib-discretization-step) + (random-float distrib-discretization-step - (2 * distrib-var * distrib-discretization-step))]
+    if distrib-type = "closest-center-mean-gaussian" [
+      let closest-center one-of centers with-min [distance myself]
+      let avg [distribution-average] of closest-center
+      let drel (distance closest-center) / dmax
+      
+       ;set distrib-mean avg * distrib-discretization-step ; test
+      set distrib-mean random-normal (avg * distrib-discretization-step) (drel * average-distance-variability * distrib-discretization-step)
+      
+    ]
     
     repeat distrib-bootstrap-step [
-      let val min list (distrib-discretization-step - 1) (max list 0 (floor (random-normal distrib-mean (distrib-var * distrib-discretization-step))))
+      let val min list (length distrib - 1) (max list 0 (floor ((random-normal distrib-mean (distrib-var * distrib-discretization-step)) + 0.1 * distrib-discretization-step)))
       set distrib replace-item val distrib ((item val distrib) + 1)
     ]
     
     let m sum distrib set distrib map [d -> d / m] distrib
     report distrib
   ]
+  
   
   ; by default report a uniform distrib
   report rep (1 / distrib-discretization-step) distrib-discretization-step

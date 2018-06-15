@@ -5,7 +5,9 @@
 
 ;;
 ;
-to setup-experiment [t distribution-sd gravity-decay overlap-threshold transport-cost]
+to setup-experiment [t distribution-sd gravity-decay overlap-threshold transport-cost avg-dist-variability]
+  
+  clear-all
   
   ; setup vars
   
@@ -13,7 +15,8 @@ to setup-experiment [t distribution-sd gravity-decay overlap-threshold transport
   set #-cities 5
   set city-radius 5
   set synthetic-hierarchy 1.3
-  set distrib-type "uniform-mean-gaussian"
+  ;set distrib-type "uniform-mean-gaussian"
+  set distrib-type "closest-center-mean-gaussian"
   set #-companies 50
   set density-file "data/nld"
   set density-exponent 1.5
@@ -25,6 +28,8 @@ to setup-experiment [t distribution-sd gravity-decay overlap-threshold transport
   set interaction-decay gravity-decay
   set bargain-threshold overlap-threshold
   set transportation-cost transport-cost
+  set average-distance-variability avg-dist-variability
+  
   
   set headless? true
   
@@ -43,6 +48,6 @@ end
 
 
 to test-experiment
-  setup-experiment "synthetic-city-system" 0.1 20 0.1 1.0
+  setup-experiment "synthetic-city-system" 0.1 20 0.1 1.0 10.0
   run-experiment
 end

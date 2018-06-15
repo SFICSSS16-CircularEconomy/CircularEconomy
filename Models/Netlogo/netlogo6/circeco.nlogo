@@ -49,6 +49,9 @@ globals [
   ; for bootstrapped distribution, number of step needed
   distrib-bootstrap-step
 
+  dmax
+
+
   ;;;;;;;;;;
   ; runtime
 
@@ -59,6 +62,8 @@ globals [
 
   ; list of time-series of cumulated waste
   waste-history
+
+
 
   ; headless
   headless?
@@ -83,6 +88,8 @@ companies-own[
   input-distribution
   output-distribution
 
+  distrib-mean
+
 
   ;; current input and output overlaps (with current prospecting company)
   ; input against output of current comp
@@ -94,6 +101,12 @@ companies-own[
   current-input-utility
   current-output-utility
 
+]
+
+breed [centers center]
+
+centers-own [
+  distribution-average
 ]
 
 directed-link-breed [flows flow]
@@ -148,7 +161,7 @@ SLIDER
 #-cities
 0
 10
-5.0
+10.0
 1
 1
 NIL
@@ -217,14 +230,14 @@ NIL
 1
 
 CHOOSER
-7
-155
-174
-200
+4
+151
+180
+196
 distrib-type
 distrib-type
-"uniform-mean-gaussian"
-0
+"uniform-mean-gaussian" "closest-center-mean-gaussian"
+1
 
 SLIDER
 12
@@ -457,6 +470,21 @@ density-exponent
 3
 1.5
 0.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+11
+435
+215
+468
+average-distance-variability
+average-distance-variability
+0
+50
+7.95
+0.05
 1
 NIL
 HORIZONTAL

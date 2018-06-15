@@ -42,7 +42,9 @@ to setup-globals
   set distrib-bootstrap-step 10000
    
   set waste-history []
-    
+  
+  set dmax sqrt (world-width ^ 2 + world-height ^ 2)
+  
 end
 
 
@@ -71,26 +73,34 @@ to generate-synthetic-density
   ; P_i = Pmax / i ^ \alpha - with Pmax= 1, P_i = 1/i^alpha ; total pop for one kernel : P = 1/i^alpha = 2*pi*r_i
   let i 1
   repeat #-cities [
-    apply-poisson-kernel city-radius / (i ^ (synthetic-hierarchy - 1)) 1 "density" (one-of patches with [pxcor > min-pxcor + 10 and pxcor < max-pxcor - 10 and pycor > min-pycor + 10 and pycor < max-pycor - 10])
+    let p (one-of patches with [pxcor > min-pxcor + 10 and pxcor < max-pxcor - 10 and pycor > min-pycor + 10 and pycor < max-pycor - 10])
+    let pop city-radius / (i ^ (synthetic-hierarchy - 1))
+    ask p [sprout-centers 1 [
+      ;set hidden? true
+    ]
+    ]
+    apply-poisson-kernel pop 1 "density" p
     set i i + 1
   ]
   let stot sum [density] of patches
   ask patches [set density density / stot]
+  
+  set i 1
+  ask centers [set distribution-average i / #-cities set i i + 1]
+  
 end
 
 
 to setup-companies
   let patch-list to-list patches
   let uniform (sum [density] of patches = 0)
-  create-companies #-companies [
-    new-company 
-    
+  create-companies #-companies [ 
+   
     ; draw position at random given density distrib
     ; 
     ifelse uniform = true [
       setxy random-xcor random-ycor
-    ]
-    [
+    ][
       let s 0
       let stot sum [density ^ density-exponent] of patches
       let r random-float stot let found false foreach patch-list [
@@ -98,6 +108,8 @@ to setup-companies
           ask p [set s s + (density ^ density-exponent)] if s > r and not found [setxy [pxcor] of p [pycor] of p set found true]]
       setxy xcor - 0.5 + random-float 1 ycor - 0.5 + random-float 1
     ]
+    
+    new-company
   ]
 end
 
