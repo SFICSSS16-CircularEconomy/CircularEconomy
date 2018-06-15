@@ -18,18 +18,22 @@ to-report get-potential-partners
    ; distance interaction potential
    ; V_ij ~ 1/d_ij ^alpha ? easier with exp potential : |P(i->j) = exp(-d_ij/d_0)
    ask other companies [
+     ;show exp (- distance myself / interaction-decay)
      if random-float 1 < exp (- distance myself / interaction-decay) [set potential-partners lput self potential-partners]
    ]
    
    let res []
    ; threshold rule
    ; -> here already compute overlaps for potential partners
-   ask other companies [
+   ;ask other companies [
+   foreach potential-partners [
+    p -> ask p [
      set current-input-overlap distribution-overlap [output-distribution] of myself input-distribution
      set current-output-overlap distribution-overlap [input-distribution] of myself output-distribution 
      if current-input-overlap > bargain-threshold or current-output-overlap > bargain-threshold [
        set res lput self res
      ]
+    ]
    ]
     
    report to-agentset res

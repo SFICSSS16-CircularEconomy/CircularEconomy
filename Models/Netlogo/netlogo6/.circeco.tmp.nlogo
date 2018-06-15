@@ -235,7 +235,7 @@ interaction-decay
 interaction-decay
 0
 100
-52.8662
+1.0E-4
 0.0001
 1
 NIL
