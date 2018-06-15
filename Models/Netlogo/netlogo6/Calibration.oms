@@ -48,8 +48,7 @@ val evolution =
     algorithm = NSGA2(
       mu = 200,
       genome = Seq(
-      gravityDecay in Range(0.0,100.0),
-      distribSd in Range(0.01,0.5),
+      gravityDecay in Range(1.0,100.0),
       overlapThreshold in Range(0.0,0.5)),
       objectives = Seq(totalWaste,relativeCost),
       stochastic = Stochastic(seed = replication)
@@ -61,14 +60,14 @@ val evolution =
 val island =
   IslandEvolution(
     island = evolution,
-    parallelism = 15,
+    parallelism = 200,
     termination = 50000
   )
 
 val savePopulationHook = SavePopulationHook(island, workDirectory /  "exploration" / ((new SimpleDateFormat("yyyyMMdd_HHmm")).format(new Date()))+"_"+purpose)
 
-//val grid = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 4000 megabytes)
-val local = LocalEnvironment(15)
+val grid = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 4000 megabytes)
+//val local = LocalEnvironment(15)
 
-//island on grid hook savePopulationHook
-island on local hook savePopulationHook
+island on grid hook savePopulationHook
+//island on local hook savePopulationHook
