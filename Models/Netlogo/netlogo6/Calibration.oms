@@ -1,3 +1,9 @@
+import java.util.Date
+import java.text.SimpleDateFormat
+
+logger.level("FINE")
+
+
 // variables
 val gravityDecay = Val[Double]
 val distribSd = Val[Double]
@@ -21,16 +27,21 @@ val replication = Val[Int]
 // setup-experiment [t distribution-sd gravity-decay overlap-threshold transport-cost]
 val cmds = Seq("setup-experiment \"synthetic-city-system\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost}","run-experiment")
 
+val trcostval = 1.0
+val distribSdval = 0.1
+
+
 val model =
-NetLogo6Task(workDirectory / "model/netlogo6/HEADLESS_circeco.nlogo",cmds,embedWorkspace=true) set(
+NetLogo6Task(workDirectory / "HEADLESS_circeco.nlogo",cmds,embedWorkspace=true,reuseWorkspace=true) set(
     inputs += (gravityDecay,distribSd,overlapThreshold,transportationCost),
     outputs += (gravityDecay,distribSd,overlapThreshold,transportationCost),
     netLogoOutputs += ("total-waste", totalWaste),
     netLogoOutputs += ("relative-cost", relativeCost),
-    transportationCost := 1.0
+    transportationCost := trcostval,
+    distribSd := distribSdval
 )
 
-val purpose = "NSGA2_SYNTHETIC_TRCOST"+transportationCost
+val purpose = "NSGA2_SYNTHETIC_TRCOST"+trcostval+"_DISTRIBSD"+distribSdval
 
 val evolution =
   SteadyStateEvolution(
@@ -44,20 +55,20 @@ val evolution =
       stochastic = Stochastic(seed = replication)
     ),
     evaluation = model,
-    termination = 1 hours
+    termination = 15 minutes//1 hours
   )
 
 val island =
   IslandEvolution(
     island = evolution,
-    parallelism = 200,
+    parallelism = 15,
     termination = 50000
   )
 
 val savePopulationHook = SavePopulationHook(island, workDirectory /  "exploration" / ((new SimpleDateFormat("yyyyMMdd_HHmm")).format(new Date()))+"_"+purpose)
 
-val grid = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 4000 megabytes)
-//val local = LocalEnvironment(15)
+//val grid = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 4000 megabytes)
+val local = LocalEnvironment(15)
 
-island on grid hook savePopulationHook
-//island on local hook savePopulationHook
+//island on grid hook savePopulationHook
+island on local hook savePopulationHook
