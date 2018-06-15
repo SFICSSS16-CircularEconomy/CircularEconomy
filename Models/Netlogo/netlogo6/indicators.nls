@@ -1,0 +1,105 @@
+
+
+;; indicators
+
+;; indicators 
+;  (in time and final) are for now :
+;
+; - total-waste
+; - total-cost
+; - final-time
+; - network : components, centrality, in/out-degree, mean-flow (==number of edges given total waste), clustering coef
+;  
+
+; TODO : mean path length as circularity
+
+
+
+to setup-indicators
+  set-nw-context
+end
+
+
+to compute-indicators
+  setup-indicators
+  output-print (word "total-waste : " total-waste)
+  output-print (word "total-cost : " total-cost)
+  output-print (word "final-time : " final-time)
+  output-print (word "network-components : " network-components)
+  ;output-print (word "network-centrality : " network-centrality)
+  output-print (word "network-in-degree : " network-in-degree)
+  output-print (word "network-out-degree : " network-out-degree)
+  output-print (word "network-mean-flow : " network-mean-flow)
+  output-print (word "network-clustering-coeficient : " network-clustering-coeficient)
+end
+
+
+
+;;
+; total waste accross all companies ; normalized by company number
+to-report total-waste
+  report sum [sum output-distribution] of companies / count companies
+end
+
+
+
+;;;;;
+;; network-indcators
+
+
+;; cost of the network
+;  for now : transportation cost
+to-report total-cost
+  report sum [transportation-cost * weight * link-length / (sqrt (world-width ^ 2 + world-height ^ 2))] of flows
+end
+
+
+;;
+; cost normalized by transportation cost
+to-report relative-cost
+  report sum [weight * link-length / (sqrt (world-width ^ 2 + world-height ^ 2))] of flows
+end
+
+
+
+to set-nw-context
+  nw:set-context companies flows
+  
+  ; if weighted betweeness centrality is needed here, need to estimate it by hand.
+  ;  ...
+  
+end
+
+
+;;
+; wrapper for ticks
+to-report final-time
+  report ticks
+end
+
+;components, centrality, in/out-degree, mean-flow (==number of edges given total waste)
+
+to-report network-components
+  report length nw:weak-component-clusters
+end
+
+; bug in centrality
+;to-report network-centrality
+;  report mean [nw:weighted-closeness-centrality "weight"] of companies
+;end
+
+to-report network-in-degree
+   report mean [count in-link-neighbors] of companies
+end
+
+to-report network-out-degree
+   report mean [count out-link-neighbors] of companies
+end
+
+to-report network-mean-flow
+  report mean [weight] of flows
+end
+
+to-report network-clustering-coeficient
+  report mean [nw:clustering-coefficient] of turtles
+end
