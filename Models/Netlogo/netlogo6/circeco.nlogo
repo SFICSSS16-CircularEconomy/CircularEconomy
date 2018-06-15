@@ -148,7 +148,7 @@ SLIDER
 #-cities
 0
 10
-6.0
+5.0
 1
 1
 NIL
@@ -163,7 +163,7 @@ city-radius
 city-radius
 0
 50
-4.0
+5.0
 1
 1
 NIL
@@ -178,7 +178,7 @@ SLIDER
 #-companies
 0
 100
-46.0
+50.0
 1
 1
 NIL
@@ -193,7 +193,7 @@ distrib-var
 distrib-var
 0
 1
-0.44
+0.1
 0.01
 1
 NIL
@@ -235,7 +235,7 @@ interaction-decay
 interaction-decay
 0
 100
-58.0
+20.0
 1
 1
 NIL
@@ -250,7 +250,7 @@ bargain-threshold
 bargain-threshold
 0
 1
-0.48
+0.1
 0.01
 1
 NIL
@@ -265,7 +265,7 @@ transportation-cost
 transportation-cost
 0
 10
-4.75
+1.0
 0.01
 1
 NIL
@@ -322,7 +322,7 @@ synthetic-hierarchy
 synthetic-hierarchy
 0
 2
-0.95
+1.3
 0.05
 1
 NIL
@@ -441,7 +441,7 @@ INPUTBOX
 305
 70
 density-file
-0
+data/nld
 1
 0
 String
@@ -455,7 +455,7 @@ density-exponent
 density-exponent
 0
 3
-1.6
+1.5
 0.1
 1
 NIL
