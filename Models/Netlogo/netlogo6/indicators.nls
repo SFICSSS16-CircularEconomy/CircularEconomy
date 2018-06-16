@@ -25,12 +25,12 @@ to compute-indicators
   output-print (word "total-waste : " total-waste)
   output-print (word "total-cost : " total-cost)
   output-print (word "final-time : " final-time)
-  output-print (word "network-components : " network-components)
+  ;output-print (word "network-components : " network-components)
   ;output-print (word "network-centrality : " network-centrality)
-  output-print (word "network-in-degree : " network-in-degree)
-  output-print (word "network-out-degree : " network-out-degree)
-  output-print (word "network-mean-flow : " network-mean-flow)
-  output-print (word "network-clustering-coeficient : " network-clustering-coeficient)
+  ;output-print (word "network-in-degree : " network-in-degree)
+  ;output-print (word "network-out-degree : " network-out-degree)
+  ;output-print (word "network-mean-flow : " network-mean-flow)
+  ;output-print (word "network-clustering-coeficient : " network-clustering-coeficient)
 end
 
 

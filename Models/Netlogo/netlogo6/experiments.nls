@@ -48,6 +48,6 @@ end
 
 
 to test-experiment
-  setup-experiment "synthetic-city-system" 0.1 20 0.1 1.0 10.0
+  setup-experiment "synthetic-city-system" 0.1 10 0.5 3.5 10.0
   run-experiment
 end

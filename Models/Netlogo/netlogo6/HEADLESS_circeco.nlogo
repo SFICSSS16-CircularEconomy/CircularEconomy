@@ -161,6 +161,23 @@ GRAPHICS-WINDOW
 ticks
 30.0
 
+BUTTON
+92
+75
+224
+108
+NIL
+test-experiment
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
 @#$#@#$#@
 ## WHAT IS IT?
 
