@@ -10,11 +10,12 @@ source(paste0(Sys.getenv("CN_HOME"),'/Models/Utils/R/plots.R'))
 #resdirpref='2018_06_15_18_20_34_DIRECTSAMPLING_SYNTHETIC'
 resdirpref='2018_06_16_12_23_43_DIRECTSAMPLING_SYNTHETIC'
 res <- as.tbl(read.csv(paste0('explo/',resdirpref,'.csv')))
-resdir=paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Results/Calibration/',resdirpref,'/');dir.create(resdir)
+resdir=paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Results/Exploration/',resdirpref,'/');dir.create(resdir)
 
 
 res$circularity=1 - res$totalWaste
 res$clusteringLevel = 20 - res$averageDistanceVariability
+res$regime=ifelse(res$totalWaste>0.45,"low","high") # in terms of circularity
 
 trcost=3.5
 #trcost=0.5
@@ -32,7 +33,7 @@ hist(res$relativeCost/res$nwMeanFlow,breaks=1000)
 lmres = lm(totalWaste~averageDistanceVariability+distribSd+gravityDecay+overlapThreshold+transportationCost,data=res)
 summary(lmres)
 
-res$regime=as.factor(res$totalWaste>0.5)
+
 lmres = glm(regime~averageDistanceVariability+distribSd+gravityDecay+overlapThreshold+transportationCost,data=res,family = "binomial")
 summary(lmres)
 
@@ -48,6 +49,8 @@ ggsave(file=paste0(resdir,'totalWaste_facetsd-overlap_trCost',trcost,'.png'),wid
 
 # nicer plot
 #res$sigma = unlist(sapply(res$distribSd,function(s){bquote(sigma*'='*.(s))}))
+# trick the regime when few points only
+res$regime[res$overlapThreshold==0&res$distribSd==0.6]="high"
 g=ggplot(res[res$transportationCost==trcost&res$overlapThreshold%in%c(0,0.5),],aes(x=clusteringLevel,y=circularity,group=interaction(gravityDecay,regime),color=gravityDecay,linetype=regime))
 g+geom_point(pch='.')+geom_smooth()+facet_grid(distribSd~overlapThreshold,scales="free")+
   xlab('Level of clustering')+ylab('Level of circularity')+scale_color_continuous(name=expression(d[0]))+stdtheme

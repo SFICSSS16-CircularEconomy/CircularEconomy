@@ -1,4 +1,4 @@
-extensions [nw gis palette]
+extensions [nw gis palette morphology]
 
 
 __includes [
@@ -138,7 +138,7 @@ GRAPHICS-WINDOW
 382
 20
 995
-514
+634
 -1
 -1
 5.0
@@ -154,7 +154,7 @@ GRAPHICS-WINDOW
 0
 120
 0
-96
+120
 0
 0
 1

@@ -62,7 +62,7 @@ end
 ;  or no new links ? not sure because can pick a guy and nothing happens (rq : algo not blocked as random at each step)
 ;   - delta-waste very small ? -> cumulated delta-waste very small <-
 to-report stop-criteria?
-  ifelse length waste-history < 1000 [report false][report true]
+  ifelse length waste-history < 500 [report false][report true]
   ;if length waste-history < 100 [report false]
   ; else compute the ∆waste
   ;let wq  (sublist waste-history (length waste-history - 100) length waste-history)

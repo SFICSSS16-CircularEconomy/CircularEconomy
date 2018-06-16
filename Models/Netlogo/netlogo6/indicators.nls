@@ -77,7 +77,43 @@ to-report final-time
   report ticks
 end
 
+
+;;
+; moran index
+to-report moran-averages
+  ; brute force computation
+  let mu mean [distrib-mean] of companies
+  let scov 0 let svar 0 let wtot 0
+  ask companies [set svar svar + ((distrib-mean - mu)^ 2) ask other companies [let w 1 / distance myself set scov scov + (w * (distrib-mean - mu)*([distrib-mean] of myself - mu)) set wtot wtot + w]]
+  report (count companies)* scov / (wtot * svar)
+end
+
+
+to-report population-moran
+  report morphology:moran 0
+end
+
+to-report population-distance
+  report morphology:distance 0
+end
+
+to-report population-entropy
+  report morphology:entropy 0
+end
+
+to-report population-slope
+  report item 0 morphology:slope 0
+end
+
 ;components, centrality, in/out-degree, mean-flow (==number of edges given total waste)
+
+
+;;
+; number of links
+to-report network-size
+  report count flows
+end
+
 
 to-report network-components
   report length nw:weak-component-clusters

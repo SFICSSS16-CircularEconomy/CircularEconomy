@@ -1,4 +1,4 @@
-extensions [nw gis palette]
+extensions [nw gis palette morphology]
 
 
 __includes [
@@ -137,8 +137,8 @@ flows-own [
 GRAPHICS-WINDOW
 382
 20
-995
-514
+895
+534
 -1
 -1
 5.0
@@ -152,9 +152,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-120
+100
 0
-96
+100
 0
 0
 1
