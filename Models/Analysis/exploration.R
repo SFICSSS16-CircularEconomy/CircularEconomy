@@ -17,8 +17,8 @@ res$circularity=1 - res$totalWaste
 res$clusteringLevel = 20 - res$averageDistanceVariability
 res$regime=ifelse(res$totalWaste>0.45,"low","high") # in terms of circularity
 
-trcost=3.5
-#trcost=0.5
+#trcost=3.5
+trcost=0.5
 
 
 ## Question : determinants of output regime ?
@@ -54,7 +54,7 @@ res$regime[res$overlapThreshold==0&res$distribSd==0.6]="high"
 g=ggplot(res[res$transportationCost==trcost&res$overlapThreshold%in%c(0,0.5),],aes(x=clusteringLevel,y=circularity,group=interaction(gravityDecay,regime),color=gravityDecay,linetype=regime))
 g+geom_point(pch='.')+geom_smooth()+facet_grid(distribSd~overlapThreshold,scales="free")+
   xlab('Level of clustering')+ylab('Level of circularity')+scale_color_continuous(name=expression(d[0]))+stdtheme
-ggsave(file=paste0(resdir,'totalWaste_facetsd-overlap_trCost',trcost,'_extract.png'),width=18,height=15,units='cm')
+ggsave(file=paste0(resdir,'totalWaste_facetsd-overlap_trCost',trcost,'_extract_withRegime.png'),width=18,height=15,units='cm')
 
 
 
