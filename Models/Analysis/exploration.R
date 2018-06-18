@@ -3,13 +3,14 @@ library(ggplot2)
 library(GGally)
 
 
-setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Models/NetLogo/netlogo6'))
-source(paste0(Sys.getenv("CN_HOME"),'/Models/Utils/R/plots.R'))
+setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Models/Netlogo/netlogo6'))
+source(paste0(Sys.getenv("CS_HOME"),'/CityNetwork/Models/Utils/R/plots.R'))
 
 #resdirpref='2018_06_16_01_09_28_DIRECTSAMPLING_SYNTHETIC_LOCAL'
 #resdirpref='2018_06_15_18_20_34_DIRECTSAMPLING_SYNTHETIC'
-resdirpref='2018_06_16_12_23_43_DIRECTSAMPLING_SYNTHETIC'
-res <- as.tbl(read.csv(paste0('explo/',resdirpref,'.csv')))
+resdirpref='2018_06_16_21_01_13_DIRECTSAMPLING_SYNTHETIC'
+#res <- as.tbl(read.csv(paste0('explo/',resdirpref,'.csv')))
+res <- as.tbl(read.csv(paste0('exploration/',resdirpref,'.csv')))
 resdir=paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Results/Exploration/',resdirpref,'/');dir.create(resdir)
 
 
@@ -51,7 +52,9 @@ ggsave(file=paste0(resdir,'totalWaste_facetsd-overlap_trCost',trcost,'.png'),wid
 #res$sigma = unlist(sapply(res$distribSd,function(s){bquote(sigma*'='*.(s))}))
 # trick the regime when few points only
 res$regime[res$overlapThreshold==0&res$distribSd==0.6]="high"
-g=ggplot(res[res$transportationCost==trcost&res$overlapThreshold%in%c(0,0.5),],aes(x=clusteringLevel,y=circularity,group=interaction(gravityDecay,regime),color=gravityDecay,linetype=regime))
+#g=ggplot(res[res$transportationCost==trcost&res$overlapThreshold%in%c(0,0.5),],aes(x=clusteringLevel,y=circularity,group=interaction(gravityDecay,regime),color=gravityDecay,linetype=regime))
+g=ggplot(res[res$transportationCost==trcost&res$overlapThreshold%in%c(0.01,0.05),],aes(x=clusteringLevel,y=circularity,group=gravityDecay,color=gravityDecay))
+
 g+geom_point(pch='.')+geom_smooth()+facet_grid(distribSd~overlapThreshold,scales="free")+
   xlab('Level of clustering')+ylab('Level of circularity')+scale_color_continuous(name=expression(d[0]))+stdtheme
 ggsave(file=paste0(resdir,'totalWaste_facetsd-overlap_trCost',trcost,'_extract_withRegime.png'),width=18,height=15,units='cm')
