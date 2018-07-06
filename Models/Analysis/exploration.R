@@ -17,7 +17,7 @@ resdir=paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Results/Exploration/',resd
 res$circularity=1 - res$totalWaste
 res$clusteringLevel = 20 - res$averageDistanceVariability
 #res$regime=ifelse(res$totalWaste>0.45,"low","high") # in terms of circularity
-res$regime=ifelse(res$totalWaste>0.55,"low","high") 
+res$regime=ifelse(res$circularity<0.55,"low","high") 
 
 
 #####
@@ -67,7 +67,7 @@ ggsave(file=paste0(resdir,'totalWaste_facetsd-overlap_trCost',trcost,'.png'),wid
 ovthresholds = c(0.0,0.2)
 distribsd = c(0.01,0.05)
 
-
+res$regime[res$distribSd==0.01]="high"
 
 g=ggplot(res[res$transportationCost==trcost&res$overlapThreshold%in%ovthresholds&res$distribSd%in%distribsd,],aes(x=clusteringLevel,y=circularity,group=interaction(gravityDecay,regime),color=gravityDecay,linetype=regime))
 g+geom_point(pch='.')+geom_smooth()+facet_grid(distribSd~overlapThreshold,scales="free")+
