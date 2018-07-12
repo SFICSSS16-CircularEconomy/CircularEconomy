@@ -2,17 +2,24 @@
 library(dplyr)
 library(ggplot2)
 
-setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/CircularEconomy/Results/Exploration'))
+#setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/CircularEconomy/Results/Exploration'))
+setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Models/Netlogo/netlogo6'))
 source(paste0(Sys.getenv("CN_HOME"),'/Models/Utils/R/plots.R'))
 
 #ressynth <- as.tbl(read.csv('20160701_gridlocal/2016_07_01_07_18_26_grid_local.csv'))
-ressynth <- as.tbl(read.csv('20170127_grid_synthetic/2017_01_27_18_38_23_grid_synthetic.csv'))
-resgis <- as.tbl(read.csv('20160706_grid_gis/2016_07_06_08_36_31_grid_gis_corrected.csv'))
+#ressynth <- as.tbl(read.csv('20170127_grid_synthetic/2017_01_27_18_38_23_grid_synthetic.csv'))
+resdirpref='2018_06_19_18_50_44_DIRECTSAMPLING_SYNTHETIC'
+ressynth <- as.tbl(read.csv(paste0('exploration/',resdirpref,'.csv')))
+#resgis <- as.tbl(read.csv('20160706_grid_gis/2016_07_06_08_36_31_grid_gis_corrected.csv'))
 #res=res[res$finalTime!="null"&res$nwClustCoef!="null"&res$nwComponents!="null"&res$nwInDegree!="null"&res$nwClustCoef!="null"&res$nwOutDegree!="null"&res$totalCost!="null"&res$totalWaste!="null",]
 
-synthresprefix = '20170127_grid_synthetic'
+ressynth$circularity=1 - ressynth$totalWaste
+ressynth$clusteringLevel = 20 - ressynth$averageDistanceVariability
 
-sressynth = ressynth %>% group_by(distribSd,gravityDecay,overlapThreshold,transportationCost)%>% summarise(
+#synthresprefix = '20170127_grid_synthetic'
+synthresprefix = '20180619_directsampling_synthetic'
+
+sressynth = ressynth %>% group_by(distribSd,gravityDecay,overlapThreshold,transportationCost,clusteringLevel)%>% summarise(
   finalTime = mean(finalTime),nwClustCoef=mean(nwClustCoef),nwComponents=mean(nwComponents),
   nwInDegree=mean(nwInDegree),nwMeanFlow=mean(nwMeanFlow),nwOutDegree=mean(nwOutDegree),
   totalCost=mean(as.numeric(totalCost)),totalWaste=mean(totalWaste),count=n()#,
@@ -37,6 +44,21 @@ sresgis = resgis %>% group_by(distribSd,gravityDecay,overlapThreshold,transporta
 )
 
 
+####
+## Heatmaps
+indics = c("nwOutDegree","nwClustCoef","totalCost","totalWaste")
+
+plotlist = list()
+for(indic in indics){
+  g = ggplot(sressynth[sressynth$clusteringLevel==5.0,],aes_string(x="overlapThreshold",y="gravityDecay",fill=indic))
+  plotlist[[indic]]=g+geom_raster(hjust=0,vjust=0)+facet_grid(transportationCost~distribSd,scales = "free")+scale_fill_gradient(low='yellow',high='red')
+}
+multiplot(plotlist=plotlist,cols=2)
+
+
+
+####
+## Differences
 
 # construct comparable df
 rgis = sresgis[sresgis$gravityDecay%in%sressynth$gravityDecay,] %>% arrange(distribSd,gravityDecay,overlapThreshold,transportationCost)
