@@ -1,4 +1,4 @@
-extensions [nw gis palette morphology]
+extensions [nw gis palette ]
 
 
 __includes [
@@ -161,7 +161,7 @@ SLIDER
 #-cities
 0
 10
-3.0
+0.0
 1
 1
 NIL
@@ -176,7 +176,7 @@ city-radius
 city-radius
 0
 50
-10.0
+0.0
 1
 1
 NIL
@@ -191,7 +191,7 @@ SLIDER
 #-companies
 0
 100
-50.0
+0.0
 1
 1
 NIL
@@ -206,7 +206,7 @@ distrib-var
 distrib-var
 0
 1
-0.04
+0.0
 0.01
 1
 NIL
@@ -248,7 +248,7 @@ interaction-decay
 interaction-decay
 0
 100
-43.949
+0.0
 0.0001
 1
 NIL
@@ -263,7 +263,7 @@ bargain-threshold
 bargain-threshold
 0
 1
-0.06
+0.0
 0.01
 1
 NIL
@@ -278,7 +278,7 @@ transportation-cost
 transportation-cost
 0
 10
-3.61
+0.0
 0.01
 1
 NIL
@@ -335,7 +335,7 @@ synthetic-hierarchy
 synthetic-hierarchy
 0
 2
-1.6
+0.0
 0.05
 1
 NIL
@@ -468,7 +468,7 @@ density-exponent
 density-exponent
 0
 3
-1.3
+0.0
 0.1
 1
 NIL
@@ -483,7 +483,7 @@ average-distance-variability
 average-distance-variability
 0
 50
-2.4
+0.0
 0.05
 1
 NIL
