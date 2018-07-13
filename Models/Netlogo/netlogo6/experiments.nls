@@ -47,7 +47,9 @@ end
 
 
 to test-experiment
-  setup-experiment "synthetic-city-system" "closest-center-mean-gaussian" 0.05 10 0.05 3.5 5.0
+  ; setup-experiment [setuptype distribtype distribution-sd gravity-decay overlap-threshold transport-cost avg-dist-variability]
+  ;setup-experiment "synthetic-city-system" "closest-center-mean-gaussian" 0.05 10 0.05 3.5 5.0
+  setup-experiment "uniform" "uniform-mean-gaussian" 0.01 10 0.05 2.0 0.0
   run-experiment
   compute-indicators
 end

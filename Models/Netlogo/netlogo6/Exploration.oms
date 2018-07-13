@@ -59,42 +59,42 @@ val model = NetLogo6Task(workDirectory / "HEADLESS_circeco.nlogo",cmds,embedWork
 )
 
 
-val purpose = "DIRECTSAMPLING_SYNTHETIC"
-//val purpose = "TEST"
+//val purpose = "DIRECTSAMPLING_SYNTHETIC"
+val purpose = "TEST"
 
 val indics_hook = AppendToCSVFileHook(workDirectory / "exploration" / ((new SimpleDateFormat("yyyyMMdd_HHmmss")).format(new Date()))+"_"+purpose+".csv")
 
-val env = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 2000 megabytes)
-//val env = LocalEnvironment(50)
+//val env = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 2000 megabytes)
+val env = LocalEnvironment(50)
 
 
 val replications =
  Replication (
-   evaluation = (model on env by 40 hook indics_hook),
-   //evaluation = (model on env hook indics_hook),
+   //evaluation = (model on env by 40 hook indics_hook),
+   evaluation = (model on env hook indics_hook),
    seed = replication,
-   replications = 100
-   //replications = 50
+   //replications = 100
+   replications = 50
 )
 
 val exploration =
   DirectSampling(
     evaluation = replications,
     sampling = (
-      (
-	(gravityDecay in (10.0 to 90.0 by 20.0))
+      /*(
+	      (gravityDecay in (10.0 to 90.0 by 20.0))
        x (distribSd in (0.01 to 0.06 by 0.01))
        x (overlapThreshold in Seq(0.0,0.05,0.1,0.15,0.2))
        x (transportationCost in (0.5 to 3.6 by 1.5))
        //x (averageDistanceVariability in (0.0 to 15.0 by 0.25)))
-      )
-      /*LHS(1,
-        gravityDecay in Range(10.0,100.0),
-	      distribSd in Range(0.1,0.6),
-        overlapThreshold in Range(0.0,0.5),
-        transportationCost in Range(0.5,3.0),
-        averageDistanceVariability in Range(0.0,20.0)
       )*/
+      LHS(1,
+        gravityDecay in Range(10.0,90.0),
+	      distribSd in Range(0.01,0.06),
+        overlapThreshold in Range(0.0,0.2),
+        transportationCost in Range(0.5,3.6)//,
+        //averageDistanceVariability in Range(0.0,20.0)
+      )
          withIndex id )
          x (averageDistanceVariability is 0.0)
          x (setupType in Seq("synthetic-city-system","uniform"))
