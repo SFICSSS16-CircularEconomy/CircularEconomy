@@ -24,13 +24,20 @@ to compute-indicators
   setup-indicators
   output-print (word "total-waste : " total-waste)
   output-print (word "total-cost : " total-cost)
+  output-print (word "relative-cost : " relative-cost)
   output-print (word "final-time : " final-time)
-  ;output-print (word "network-components : " network-components)
+  output-print (word "network-components : " network-components)
   ;output-print (word "network-centrality : " network-centrality)
-  ;output-print (word "network-in-degree : " network-in-degree)
-  ;output-print (word "network-out-degree : " network-out-degree)
-  ;output-print (word "network-mean-flow : " network-mean-flow)
-  ;output-print (word "network-clustering-coeficient : " network-clustering-coeficient)
+  output-print (word "network-in-degree : " network-in-degree)
+  output-print (word "network-out-degree : " network-out-degree)
+  output-print (word "network-mean-flow : " network-mean-flow)
+  output-print (word "network-clustering-coeficient : " network-clustering-coeficient)
+  output-print (word "network-size : "  network-size)
+  output-print (word "moran-averages : " moran-averages)
+  output-print (word "population-moran : " population-moran)
+  output-print (word "population-entropy : " population-entropy)
+  output-print (word "population-slope : " population-slope)
+  output-print (word "population-distance : " population-distance)
 end
 
 
@@ -90,19 +97,19 @@ end
 
 
 to-report population-moran
-  report morphology:moran 0
+  ifelse max [density] of patches = 0 [report 0][report morphology:moran 0]
 end
 
 to-report population-distance
-  report morphology:distance 0
+  ifelse max [density] of patches = 0 [report 0][report morphology:distance 0]
 end
 
 to-report population-entropy
-  report morphology:entropy 0
+  ifelse max [density] of patches = 0 [report 0][report morphology:entropy 0]
 end
 
 to-report population-slope
-  report item 0 morphology:slope 0
+  ifelse max [density] of patches = 0 [report 0][report item 0 morphology:slope 0]
 end
 
 ;components, centrality, in/out-degree, mean-flow (==number of edges given total waste)

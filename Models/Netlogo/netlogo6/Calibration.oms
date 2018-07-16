@@ -27,8 +27,8 @@ val replication = Val[Int]
 // setup-experiment [t distribution-sd gravity-decay overlap-threshold transport-cost]
 val cmds = Seq("setup-experiment \"synthetic-city-system\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost}","run-experiment")
 
-val trcostval = 1.0
-val distribSdval = 0.1
+val trcostval = 3.5
+val distribSdval = 0.01
 
 
 val model =
@@ -54,7 +54,7 @@ val evolution =
       stochastic = Stochastic(seed = replication)
     ),
     evaluation = model,
-    termination = 15 minutes//1 hours
+    termination = 30 minutes//1 hours
   )
 
 val island =
