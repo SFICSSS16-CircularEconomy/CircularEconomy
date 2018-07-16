@@ -1,6 +1,7 @@
 
 library(dplyr)
 library(ggplot2)
+library(Matrix)
 
 #setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Results/Exploration'))
 setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Models/Netlogo/netlogo6'))
@@ -14,7 +15,93 @@ ressynth <- as.tbl(read.csv(paste0('exploration/',resdirpref,'.csv')))
 #resgis <- as.tbl(read.csv('20160706_grid_gis/2016_07_06_08_36_31_grid_gis_corrected.csv'))
 #res=res[res$finalTime!="null"&res$nwClustCoef!="null"&res$nwComponents!="null"&res$nwInDegree!="null"&res$nwClustCoef!="null"&res$nwOutDegree!="null"&res$totalCost!="null"&res$totalWaste!="null",]
 res <- as.tbl(read.csv('20180713_210239_DIRECTSAMPLING_SYNTHETIC/data/20180713_210239_DIRECTSAMPLING_SYNTHETIC.csv'))
+resdir <- '20180713_210239_DIRECTSAMPLING_SYNTHETIC/'
 
+#####
+## raw plots
+
+g = ggplot(res,aes(x=gravityDecay,y = totalWaste,group = interaction(distribSd,setupType),color=distribSd, linetype=setupType))+geom_point(pch='.')+
+  geom_smooth()+facet_grid(transportationCost~overlapThreshold)+ylab('Total waste')+xlab(expression(d[0]))+
+  scale_color_continuous(name=expression(sigma))+scale_linetype_discrete(name="Setup")+stdtheme
+ggsave(plot=g,file=paste0(resdir,'totalWaste_d0_facet.png'),width=60,height = 30, units='cm')
+
+# test sensitivity to setup type
+summary(res %>% group_by(gravityDecay,overlapThreshold,distribSd,transportationCost)%>% summarise(waste = mean(totalWaste[as.character(setupType)=="uniform"])-mean(totalWaste[as.character(setupType)=="synthetic-city-system"])))
+# -> up to 0.22 difference in totalWaste
+
+g = ggplot(res[res$distribSd%in%c(min(res$distribSd),max(res$distribSd))&res$transportationCost%in%c(min(res$transportationCost),max(res$transportationCost))&res$overlapThreshold%in%c(min(res$overlapThreshold),max(res$overlapThreshold)),],
+           aes(x=gravityDecay,y = totalWaste,group = interaction(distribSd,setupType),color=distribSd, linetype=setupType))+geom_point(pch='.')+
+  geom_smooth()+facet_grid(transportationCost~overlapThreshold)+ylab('Total waste')+xlab(expression(d[0]))+
+  scale_color_continuous(name=expression(sigma))+scale_linetype_discrete(name="Setup")+stdtheme
+ggsave(plot=g,file=paste0(resdir,'totalWaste_d0_facet_extract.png'),width=60,height = 30, units='cm')
+
+g = ggplot(res[res$distribSd%in%c(min(res$distribSd),max(res$distribSd))&res$gravityDecay%in%c(min(res$gravityDecay),max(res$gravityDecay))&res$overlapThreshold%in%c(min(res$overlapThreshold),max(res$overlapThreshold)),],
+           aes(x=transportationCost,y = totalWaste,group = interaction(distribSd,setupType),color=distribSd, linetype=setupType))+geom_point(pch='.')+
+  geom_smooth()+facet_grid(gravityDecay~overlapThreshold)+ylab('Total waste')+xlab(expression(c))+
+  scale_color_continuous(name=expression(sigma))+scale_linetype_discrete(name="Setup")+stdtheme
+ggsave(plot=g,file=paste0(resdir,'totalWaste_c_facet_extract.png'),width=60,height = 30, units='cm')
+
+g = ggplot(res[res$transportationCost%in%c(min(res$transportationCost),max(res$transportationCost))&res$gravityDecay%in%c(min(res$gravityDecay),max(res$gravityDecay))&res$overlapThreshold%in%c(min(res$overlapThreshold),max(res$overlapThreshold)),],
+           aes(x=distribSd,y = totalWaste,group = interaction(transportationCost,setupType),color=transportationCost, linetype=setupType))+geom_point(pch='.')+
+  geom_smooth()+facet_grid(gravityDecay~overlapThreshold)+ylab('Total waste')+xlab(expression(sigma))+
+  scale_color_continuous(name=expression(c))+scale_linetype_discrete(name="Setup")+stdtheme
+ggsave(plot=g,file=paste0(resdir,'totalWaste_sigma_facet_extract.png'),width=60,height = 30, units='cm')
+
+g = ggplot(res[res$transportationCost%in%c(min(res$transportationCost),max(res$transportationCost))&res$gravityDecay%in%c(min(res$gravityDecay),max(res$gravityDecay))&res$distribSd%in%c(min(res$distribSd),max(res$distribSd)),],
+           aes(x=overlapThreshold,y = totalWaste,group = interaction(transportationCost,setupType),color=transportationCost, linetype=setupType))+geom_point(pch='.')+
+  geom_smooth()+facet_grid(gravityDecay~distribSd)+ylab('Total waste')+xlab(expression(theta))+
+  scale_color_continuous(name=expression(c))+scale_linetype_discrete(name="Setup")+stdtheme
+ggsave(plot=g,file=paste0(resdir,'totalWaste_theta_facet_extract.png'),width=60,height = 30, units='cm')
+
+
+## cost
+
+g = ggplot(res[res$transportationCost%in%c(min(res$transportationCost),max(res$transportationCost))&res$gravityDecay%in%c(min(res$gravityDecay),max(res$gravityDecay))&res$overlapThreshold%in%c(min(res$overlapThreshold),max(res$overlapThreshold)),],
+           aes(x=distribSd,y = relativeCost,group = interaction(transportationCost,setupType),color=transportationCost, linetype=setupType))+geom_point(pch='.')+
+  geom_smooth()+facet_grid(gravityDecay~overlapThreshold)+ylab('Relative cost')+xlab(expression(sigma))+
+  scale_color_continuous(name=expression(c))+scale_linetype_discrete(name="Setup")+stdtheme
+ggsave(plot=g,file=paste0(resdir,'relativeCost_sigma_facet_extract.png'),width=30,height = 15, units='cm')
+
+
+## Pareto
+
+g=ggplot(res[res$transportationCost%in%c(min(res$transportationCost),max(res$transportationCost))&res$distribSd%in%c(min(res$distribSd),max(res$distribSd)),],
+         aes(x=relativeCost,y=totalWaste,color=overlapThreshold))+
+  geom_point(size=0.2,alpha=0.3)+
+  facet_grid(transportationCost~distribSd)+
+  xlab("Total waste")+ylab("Relative cost")+scale_color_continuous(name=expression(theta))+stdtheme
+ggsave(plot=g,file=paste0(resdir,'pareto_theta_facet_extract.png'),width=30,height = 15, units='cm')
+
+g=ggplot(res[res$transportationCost%in%c(min(res$transportationCost),max(res$transportationCost))&res$distribSd%in%c(min(res$distribSd),max(res$distribSd)),],
+         aes(x=relativeCost,y=totalWaste,color=setupType))+
+  geom_point(size=0.2,alpha=0.3)+
+  facet_grid(transportationCost~distribSd)+
+  xlab("Total waste")+ylab("Relative cost")+stdtheme
+ggsave(plot=g,file=paste0(resdir,'pareto_setupType_facet_extract.png'),width=30,height = 25, units='cm')
+
+
+## Statistics : CI and sharpe ratio
+
+# in the case of n~64, we have |CI|~sigma -> compare |mu_i - mu-j|/sigma
+
+sres = res[res$setupType=="uniform",]%>%group_by(gravityDecay,overlapThreshold,distribSd,transportationCost)%>%summarize(waste=mean(totalWaste),wasteSd=sd(totalWaste),cost=mean(relativeCost),costSd=sd(relativeCost))
+
+#(Matrix(rep(sres$waste,nrow(sres)),nrow = nrow(sres),byrow = T)-Matrix(rep(sres$waste,nrow(sres)),nrow = nrow(sres),byrow = F))
+
+sharpDiffMatrix <- function(x,s){
+ return(2 * (Matrix(rep(x,length(x)),nrow = length(x),byrow = T)-Matrix(rep(x,length(x)),nrow = length(x),byrow = F)) /(Matrix(rep(s,length(s)),nrow = length(s),byrow = T)+Matrix(rep(s,length(s)),nrow = length(s),byrow = F))  )
+}
+
+summary(sharpDiffMatrix(sres$waste,sres$wasteSd))
+#
+
+summary(sharpDiffMatrix(sres$cost,sres$costSd))
+#
+
+
+
+#####
+## summarized plots
 
 ressynth$circularity=1 - ressynth$totalWaste
 ressynth$clusteringLevel = 20 - ressynth$averageDistanceVariability
