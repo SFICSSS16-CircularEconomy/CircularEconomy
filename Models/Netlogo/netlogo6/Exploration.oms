@@ -82,10 +82,10 @@ val exploration =
     evaluation = replications,
     sampling = (
       (
-	      (gravityDecay in (10.0 to 90.0 by 20.0))
-       x (distribSd in (0.01 to 0.06 by 0.01))
-       x (overlapThreshold in Seq(0.0,0.05,0.1,0.15,0.2))
-       x (transportationCost in (0.5 to 3.6 by 1.5))
+	      (gravityDecay in (10.0 to 100.0 by 10.0))
+       x (distribSd in (0.01 to 0.1 by 0.01))
+       x (overlapThreshold in (0.0 to 0.2 by 0.025))
+       x (transportationCost in (0.5 to 3.6 by 0.25))
        //x (averageDistanceVariability in (0.0 to 15.0 by 0.25)))
       )
       /*LHS(1,
