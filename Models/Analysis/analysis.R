@@ -2,13 +2,15 @@
 library(dplyr)
 library(ggplot2)
 
-setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/CircularEconomy/Results/Exploration'))
-source(paste0(Sys.getenv("CN_HOME"),'/Models/Utils/R/plots.R'))
+setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Results/Exploration'))
+source(paste0(Sys.getenv("CS_HOME"),'/CityNetwork/Models/Utils/R/plots.R'))
 
 #ressynth <- as.tbl(read.csv('20160701_gridlocal/2016_07_01_07_18_26_grid_local.csv'))
 ressynth <- as.tbl(read.csv('20170127_grid_synthetic/2017_01_27_18_38_23_grid_synthetic.csv'))
 resgis <- as.tbl(read.csv('20160706_grid_gis/2016_07_06_08_36_31_grid_gis_corrected.csv'))
 #res=res[res$finalTime!="null"&res$nwClustCoef!="null"&res$nwComponents!="null"&res$nwInDegree!="null"&res$nwClustCoef!="null"&res$nwOutDegree!="null"&res$totalCost!="null"&res$totalWaste!="null",]
+res <- as.tbl(read.csv('20180713_210239_DIRECTSAMPLING_SYNTHETIC/data/20180713_210239_DIRECTSAMPLING_SYNTHETIC.csv'))
+
 
 synthresprefix = '20170127_grid_synthetic'
 
