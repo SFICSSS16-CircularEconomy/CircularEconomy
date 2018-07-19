@@ -150,7 +150,7 @@ CHOOSER
 setup-type
 setup-type
 "synthetic-city-system" "uniform" "gis"
-0
+2
 
 SLIDER
 5
@@ -237,7 +237,7 @@ CHOOSER
 distrib-type
 distrib-type
 "uniform-mean-gaussian" "closest-center-mean-gaussian"
-1
+0
 
 SLIDER
 12
@@ -278,7 +278,7 @@ transportation-cost
 transportation-cost
 0
 10
-3.61
+1.27
 0.01
 1
 NIL
@@ -454,7 +454,7 @@ INPUTBOX
 305
 70
 density-file
-0
+data/nld
 1
 0
 String

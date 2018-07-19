@@ -3,8 +3,8 @@ library(dplyr)
 library(ggplot2)
 library(Matrix)
 
-#setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Results/Exploration'))
-setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Models/Netlogo/netlogo6'))
+setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Results/Exploration'))
+#setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Models/Netlogo/netlogo6'))
 source(paste0(Sys.getenv("CN_HOME"),'/Models/Utils/R/plots.R'))
 
 
@@ -89,13 +89,19 @@ sres = res[res$setupType=="uniform",]%>%group_by(gravityDecay,overlapThreshold,d
 #(Matrix(rep(sres$waste,nrow(sres)),nrow = nrow(sres),byrow = T)-Matrix(rep(sres$waste,nrow(sres)),nrow = nrow(sres),byrow = F))
 
 sharpDiffMatrix <- function(x,s){
- return(2 * (Matrix(rep(x,length(x)),nrow = length(x),byrow = T)-Matrix(rep(x,length(x)),nrow = length(x),byrow = F)) /(Matrix(rep(s,length(s)),nrow = length(s),byrow = T)+Matrix(rep(s,length(s)),nrow = length(s),byrow = F))  )
+ res = 2 * abs(Matrix(rep(x,length(x)),nrow = length(x),byrow = T)-Matrix(rep(x,length(x)),nrow = length(x),byrow = F)) /(Matrix(rep(s,length(s)),nrow = length(s),byrow = T)+Matrix(rep(s,length(s)),nrow = length(s),byrow = F))
+ diag(res)<- Inf
+ return(res@x[is.finite(res@x)])
 }
 
-summary(sharpDiffMatrix(sres$waste,sres$wasteSd))
+sharpeWaste = sharpDiffMatrix(sres$waste,sres$wasteSd);gc()
+summary(sharpeWaste)
+quantile(sharpeWaste,seq(0.0,1.0,0.01))
 #
 
-summary(sharpDiffMatrix(sres$cost,sres$costSd))
+sharpeCost = sharpDiffMatrix(sres$cost,sres$costSd);gc()
+summary(sharpeCost)
+quantile(sharpeCost,seq(0.0,1.0,0.01))
 #
 
 
@@ -245,21 +251,43 @@ g+geom_line()+facet_grid(transportationCost~distribSd,scales = "free")
 ##########
 ## convergence
 
+
+## histograms
+
 # pb - need to construct id for gis and synthetic city system.
 
 #param_points = sample.int(2916,size=5)
-param_points = c(27,182,1717,1533,1178)
-sample = res[res$id%in%param_points,]
-sample$id=as.character(sample$id)
+#param_points = c(27,182,1717,1533,1178)
 
-plotlist = list()
-for(indic in c("totalWaste","nwInDegree")){
-  g=ggplot(sample)
-  plotlist[[indic]]=g+geom_density(aes_string(x=indic,fill="id",group="id"),alpha=0.4)
-}
-multiplot(plotlist=plotlist,cols=2)
+# handmade ids for baseline experiment
+ids = paste0("d0=",res$gravityDecay,";T0=",res$overlapThreshold,";sigma=",res$distribSd,";c=",res$transportationCost,";setup=",res$setupType)
+uids=unique(ids)
+vuids = as.character(1:length(uids));names(vuids) = uids
+res$Parameters = vuids[ids]
 
+param_points = sample(vuids,size=6)
 
+sample = res[res$Parameters%in%param_points,]
+
+#sample$id=as.character(sample$id)
+
+#plotlist = list()
+#for(indic in c("totalWaste","nwInDegree")){
+#  g=ggplot(sample)
+#  plotlist[[indic]]=g+geom_density(aes_string(x=indic,fill="id",group="id"),alpha=0.4)
+#}
+#multiplot(plotlist=plotlist,cols=2)
+
+g=ggplot(sample,aes(x=totalWaste,fill=Parameters,group=Parameters))
+g+geom_density(alpha=0.4)+xlab("Total waste")+ylab("Density")+stdtheme
+ggsave(file=paste0(resdir,'distrib_waste.png'),width=22,height=20,units='cm')
+
+g=ggplot(sample,aes(x=relativeCost,fill=Parameters,group=Parameters))
+g+geom_density(alpha=0.4)+xlab("Relative cost")+ylab("Density")+stdtheme
+ggsave(file=paste0(resdir,'distrib_cost.png'),width=22,height=20,units='cm')
+
+# write param values for the sample
+write.csv((sample%>%group_by(Parameters)%>%summarise(gravityDecay=mean(gravityDecay),distribSd=mean(distribSd),overlapThreshold=mean(overlapThreshold),transportationCost=mean(transportationCost))),file=paste0(resdir,'distrib_sample.csv'))
 
 ##########
 ## Pareto score
