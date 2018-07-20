@@ -5,17 +5,20 @@ library(Matrix)
 
 setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Results/Exploration'))
 #setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Models/Netlogo/netlogo6'))
-source(paste0(Sys.getenv("CN_HOME"),'/Models/Utils/R/plots.R'))
+source(paste0(Sys.getenv("CS_HOME"),'/Organisation/Models/Utils/R/plots.R'))
 
 
 #ressynth <- as.tbl(read.csv('20160701_gridlocal/2016_07_01_07_18_26_grid_local.csv'))
 #ressynth <- as.tbl(read.csv('20170127_grid_synthetic/2017_01_27_18_38_23_grid_synthetic.csv'))
-resdirpref='2018_06_19_18_50_44_DIRECTSAMPLING_SYNTHETIC'
-ressynth <- as.tbl(read.csv(paste0('exploration/',resdirpref,'.csv')))
+#resdirpref='2018_06_19_18_50_44_DIRECTSAMPLING_SYNTHETIC'
+#ressynth <- as.tbl(read.csv(paste0('exploration/',resdirpref,'.csv')))
 #resgis <- as.tbl(read.csv('20160706_grid_gis/2016_07_06_08_36_31_grid_gis_corrected.csv'))
 #res=res[res$finalTime!="null"&res$nwClustCoef!="null"&res$nwComponents!="null"&res$nwInDegree!="null"&res$nwClustCoef!="null"&res$nwOutDegree!="null"&res$totalCost!="null"&res$totalWaste!="null",]
-res <- as.tbl(read.csv('20180713_210239_DIRECTSAMPLING_SYNTHETIC/data/20180713_210239_DIRECTSAMPLING_SYNTHETIC.csv'))
-resdir <- '20180713_210239_DIRECTSAMPLING_SYNTHETIC/'
+
+# latest simulation file
+resdirpref = '20180713_210239_DIRECTSAMPLING_SYNTHETIC'
+res <- as.tbl(read.csv(paste0(resdirpref,'/data/20180713_210239_DIRECTSAMPLING_SYNTHETIC.csv')))
+resdir <- paste0(resdirpref,'/')
 
 #####
 ## raw plots
@@ -109,47 +112,64 @@ quantile(sharpeCost,seq(0.0,1.0,0.01))
 #####
 ## summarized plots
 
+ressynth = res
+
 ressynth$circularity=1 - ressynth$totalWaste
 ressynth$clusteringLevel = 20 - ressynth$averageDistanceVariability
 
 #synthresprefix = '20170127_grid_synthetic'
-synthresprefix = '20180619_directsampling_synthetic'
+#synthresprefix = '20180619_directsampling_synthetic'
+synthresprefix = resdir
 
-sressynth = ressynth %>% group_by(distribSd,gravityDecay,overlapThreshold,transportationCost,clusteringLevel)%>% summarise(
+#sressynth = ressynth %>%
+#sressynth = ressynth[ressynth$setupType=="synthetic-city-system",] %>%
+sressynth = ressynth %>%
+  group_by(distribSd,gravityDecay,overlapThreshold,transportationCost,clusteringLevel,setupType)%>% summarise(
   finalTime = mean(finalTime),nwClustCoef=mean(nwClustCoef),nwComponents=mean(nwComponents),
   nwInDegree=mean(nwInDegree),nwMeanFlow=mean(nwMeanFlow),nwOutDegree=mean(nwOutDegree),
-  totalCost=mean(as.numeric(totalCost)),totalWaste=mean(totalWaste),count=n()#,
+  totalCost=mean(as.numeric(totalCost)),totalWaste=mean(totalWaste),count=n(),
+  cost=mean(relativeCost),waste=mean(totalWaste)
   #transportationCost=mean(transportationCost),gravityDecay=mean(gravityDecay),
   #distribSd=mean(distribSd),overlapThreshold=mean(overlapThreshold)
 )
 
-sressynthmed = ressynth %>% group_by(distribSd,gravityDecay,overlapThreshold,transportationCost)%>% summarise(
-  finalTime = mean(finalTime),nwClustCoef=mean(nwClustCoef),nwComponents=mean(nwComponents),
-  nwInDegree=mean(nwInDegree),nwMeanFlow=mean(nwMeanFlow),nwOutDegree=mean(nwOutDegree),
-  totalCost=quantile(as.numeric(totalCost),0.5),totalWaste=quantile(totalWaste,0.5),count=n()#,
-  #transportationCost=mean(transportationCost),gravityDecay=mean(gravityDecay),
-  #distribSd=mean(distribSd),overlapThreshold=mean(overlapThreshold)
-)
 
-sresgis = resgis %>% group_by(distribSd,gravityDecay,overlapThreshold,transportationCost)%>% summarise(
-  finalTime = mean(finalTime),nwClustCoef=mean(nwClustCoef),nwComponents=mean(nwComponents),
-  nwInDegree=mean(nwInDegree),nwMeanFlow=mean(nwMeanFlow),nwOutDegree=mean(nwOutDegree),
-  totalCost=mean(as.numeric(totalCost)),totalWaste=mean(totalWaste),count=n()#,
-  #transportationCost=mean(transportationCost),gravityDecay=mean(gravityDecay),
-  #distribSd=mean(distribSd),overlapThreshold=mean(overlapThreshold)
-)
+#sressynthmed = ressynth %>% group_by(distribSd,gravityDecay,overlapThreshold,transportationCost)%>% summarise(
+#  finalTime = mean(finalTime),nwClustCoef=mean(nwClustCoef),nwComponents=mean(nwComponents),
+#  nwInDegree=mean(nwInDegree),nwMeanFlow=mean(nwMeanFlow),nwOutDegree=mean(nwOutDegree),
+#  totalCost=quantile(as.numeric(totalCost),0.5),totalWaste=quantile(totalWaste,0.5),count=n()#,
+#  #transportationCost=mean(transportationCost),gravityDecay=mean(gravityDecay),
+#  #distribSd=mean(distribSd),overlapThreshold=mean(overlapThreshold)
+#)
+
+#sresgis = resgis %>% group_by(distribSd,gravityDecay,overlapThreshold,transportationCost)%>% summarise(
+#  finalTime = mean(finalTime),nwClustCoef=mean(nwClustCoef),nwComponents=mean(nwComponents),
+#  nwInDegree=mean(nwInDegree),nwMeanFlow=mean(nwMeanFlow),nwOutDegree=mean(nwOutDegree),
+#  totalCost=mean(as.numeric(totalCost)),totalWaste=mean(totalWaste),count=n()#,
+#  #transportationCost=mean(transportationCost),gravityDecay=mean(gravityDecay),
+#  #distribSd=mean(distribSd),overlapThreshold=mean(overlapThreshold)
+#)
 
 
 ####
 ## Heatmaps
-indics = c("nwOutDegree","nwClustCoef","totalCost","totalWaste")
+#indics = c("nwOutDegree","nwClustCoef","totalCost","totalWaste")
+indics = c("waste","cost")
 
 plotlist = list()
 for(indic in indics){
-  g = ggplot(sressynth[sressynth$clusteringLevel==5.0,],aes_string(x="overlapThreshold",y="gravityDecay",fill=indic))
-  plotlist[[indic]]=g+geom_raster(hjust=0,vjust=0)+facet_grid(transportationCost~distribSd,scales = "free")+scale_fill_gradient(low='yellow',high='red')
+  #g = ggplot(sressynth[sressynth$clusteringLevel==5.0,],aes_string(x="overlapThreshold",y="gravityDecay",fill=indic))
+  #plotlist[[indic]]=g+geom_raster(hjust=0,vjust=0)+facet_grid(transportationCost~distribSd,scales = "free")+scale_fill_gradient(low='yellow',high='red')
+  
+  g = ggplot(sressynth)
+  g+geom_raster(aes_string(x="transportationCost",y="distribSd",fill=indic),hjust=0,vjust=0)+facet_grid(overlapThreshold~gravityDecay,scales = "free")+stdtheme
+  ggsave(file=paste0(resdir,'heatmap_',indic,'_facet.png'),width=32,height=30,units='cm')
+  
+  g = ggplot(sressynth[sressynth$transportationCost%in%c(min(sressynth$transportationCost),max(sressynth$transportationCost))&sressynth$distribSd%in%c(min(sressynth$distribSd),max(sressynth$distribSd)),])
+  g+geom_raster(aes_string(x="overlapThreshold",y="gravityDecay",fill=indic),hjust=0,vjust=0)+facet_grid(transportationCost~distribSd,scales = "free")+stdtheme
+  ggsave(file=paste0(resdir,'heatmap_',indic,'_facetextreme.png'),width=32,height=30,units='cm')
 }
-multiplot(plotlist=plotlist,cols=2)
+#multiplot(plotlist=plotlist,cols=2)
 
 
 
@@ -198,9 +218,12 @@ multiplot(plotlist=plotlist,cols=2)
 
 # Pareto Front
 
-g = ggplot(sres,aes(x=totalWaste,y=totalCost,color=overlapThreshold))
-g+geom_point(size=0.5)+facet_grid(transportationCost~distribSd,scales = "free")
+sres=sressynth
 
+#g = ggplot(sres,aes(x=totalWaste,y=totalCost,color=overlapThreshold))
+g = ggplot(sres,aes(x=waste,y=cost,color=overlapThreshold))
+g+geom_point(size=0.5)+facet_grid(transportationCost~distribSd,scales = "free")+stdtheme+scale_color_continuous(name=expression(T[0]))
+ggsave(file=paste0(resdir,'pareto_fullfacet.png'),width=32,height=30,units='cm')
 
 ##
 # for particular values of distribSd and tarnsportationCost == fixed "economic context"
@@ -215,15 +238,20 @@ g+geom_point(size=2)
 distribSdVal = 0.6
 transportationCostVal=0.5
 
+dir.create(paste0(synthresprefix,'paretos'))
+
 for(distribSdVal in unique(sressynth$distribSd)){
   for(transportationCostVal in unique(sressynth$transportationCost)){
-    g = ggplot(sressynth[sressynth$distribSd==distribSdVal&sressynth$transportationCost==transportationCostVal,],
-               aes(x=totalWaste,y=totalCost,color=overlapThreshold,size=gravityDecay))
-    g+geom_point()+scale_size_area(max_size = 2)+ggtitle(paste0('Uniform ; distribSd=',distribSdVal,' ; transportationCost=',transportationCostVal))
-    ggsave(paste0(synthresprefix,'/pareto_distribSd',distribSdVal,'_trCost',transportationCostVal,'.pdf'),width = 8,height = 6) 
+    for(setupType in unique(sres$setupType)){
+      g = ggplot(sressynth[sressynth$distribSd==distribSdVal&sressynth$transportationCost==transportationCostVal&sressynth$setupType==setupType,],
+                 #aes(x=totalWaste,y=totalCost,color=overlapThreshold,size=gravityDecay))
+                 aes(x=waste,y=cost,color=overlapThreshold,size=gravityDecay))
+      g+geom_point()+scale_size_area(max_size = 2,name=expression(d[0]))+scale_color_continuous(name=expression(T[0]))+xlab("Waste")+ylab("Cost")+
+        ggtitle(paste0(setupType,' ; σ =',distribSdVal,' ; c =',transportationCostVal))+stdtheme
+      ggsave(paste0(synthresprefix,'/paretos/pareto_',setupType,'_distribSd',distribSdVal,'_trCost',transportationCostVal,'.png'),width = 6,height = 5) 
+    }
   }
 }
-  
 
 
 

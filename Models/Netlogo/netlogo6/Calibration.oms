@@ -27,7 +27,7 @@ val replication = Val[Int]
 // setup-experiment [t distribution-sd gravity-decay overlap-threshold transport-cost]
 val cmds = Seq("setup-experiment \"synthetic-city-system\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost}","run-experiment")
 
-val trcostval = 3.5
+val trcostval = 3
 val distribSdval = 0.01
 
 
@@ -60,13 +60,13 @@ val evolution =
 val island =
   IslandEvolution(
     island = evolution,
-    parallelism = 200,
-    termination = 50000
+    parallelism = 1000,
+    termination = 100000
   )
 
 val savePopulationHook = SavePopulationHook(island, workDirectory /  "exploration" / ((new SimpleDateFormat("yyyyMMdd_HHmm")).format(new Date()))+"_"+purpose)
 
-val grid = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 4000 megabytes)
+val grid = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 2000 megabytes)
 //val local = LocalEnvironment(15)
 
 island on grid hook savePopulationHook
