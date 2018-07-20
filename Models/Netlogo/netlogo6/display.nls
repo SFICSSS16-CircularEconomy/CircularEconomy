@@ -12,4 +12,9 @@ to color-patches
 end
 
 
+to export-conf
+  export-view (word "res/examples/d0" interaction-decay "_T0" bargain-threshold "_sigma" distrib-var "_c" transportation-cost "_seed" seed)
+end
+
+
 

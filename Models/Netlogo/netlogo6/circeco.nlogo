@@ -150,7 +150,7 @@ CHOOSER
 setup-type
 setup-type
 "synthetic-city-system" "uniform" "gis"
-2
+0
 
 SLIDER
 5
@@ -161,7 +161,7 @@ SLIDER
 #-cities
 0
 10
-3.0
+5.0
 1
 1
 NIL
@@ -176,17 +176,17 @@ city-radius
 city-radius
 0
 50
-10.0
+5.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-205
-178
-320
-211
+4
+143
+138
+176
 #-companies
 #-companies
 0
@@ -198,10 +198,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-7
-202
-174
-235
+190
+318
+357
+351
 distrib-var
 distrib-var
 0
@@ -230,10 +230,10 @@ NIL
 1
 
 CHOOSER
-4
-151
-180
-196
+9
+197
+185
+242
 distrib-type
 distrib-type
 "uniform-mean-gaussian" "closest-center-mean-gaussian"
@@ -317,9 +317,9 @@ waste
 time
 total waste
 0.0
-10.0
-0.0
-10.0
+1.0
+0.9
+1.0
 true
 false
 "" ""
@@ -329,13 +329,13 @@ PENS
 SLIDER
 4
 108
-161
+176
 141
 synthetic-hierarchy
 synthetic-hierarchy
 0
 2
-1.6
+1.3
 0.05
 1
 NIL
@@ -418,7 +418,7 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot total-cost"
+"default" 1.0 0 -16777216 true "" "plot relative-cost"
 
 MONITOR
 1096
@@ -460,15 +460,15 @@ data/nld
 String
 
 SLIDER
-183
-107
-328
-140
+177
+108
+322
+141
 density-exponent
 density-exponent
 0
 3
-1.3
+1.5
 0.1
 1
 NIL
@@ -488,6 +488,55 @@ average-distance-variability
 1
 NIL
 HORIZONTAL
+
+BUTTON
+258
+440
+328
+473
+NIL
+reset
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+147
+144
+319
+177
+seed
+seed
+0
+100000
+0.0
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+40
+617
+153
+650
+NIL
+export-conf
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
