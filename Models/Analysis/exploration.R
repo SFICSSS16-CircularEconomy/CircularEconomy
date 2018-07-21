@@ -20,6 +20,9 @@ res$clusteringLevel = 20 - res$averageDistanceVariability
 res$regime=ifelse(res$circularity<0.55,"low","high") 
 
 
+# count
+res %>% group_by(gravityDecay,overlapThreshold,distribSd,transportationCost,averageDistanceVariability)%>% summarize(count = n())
+
 #####
 ## Stochasticity
 

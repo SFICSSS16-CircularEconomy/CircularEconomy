@@ -247,7 +247,7 @@ for(distribSdVal in unique(sressynth$distribSd)){
                  #aes(x=totalWaste,y=totalCost,color=overlapThreshold,size=gravityDecay))
                  aes(x=waste,y=cost,color=overlapThreshold,size=gravityDecay))
       g+geom_point()+scale_size_area(max_size = 2,name=expression(d[0]))+scale_color_continuous(name=expression(T[0]))+xlab("Waste")+ylab("Cost")+
-        ggtitle(paste0(setupType,' ; σ =',distribSdVal,' ; c =',transportationCostVal))+stdtheme
+        ggtitle(paste0(setupType,' ; s =',distribSdVal,' ; c =',transportationCostVal))+stdtheme
       ggsave(paste0(synthresprefix,'/paretos/pareto_',setupType,'_distribSd',distribSdVal,'_trCost',transportationCostVal,'.png'),width = 6,height = 5) 
     }
   }
@@ -256,14 +256,16 @@ for(distribSdVal in unique(sressynth$distribSd)){
 
 
 
-g = ggplot(sresgis[sresgis$distribSd==distribSdVal&sresgis$transportationCost==transportationCostVal,],
-           aes(x=totalWaste,y=totalCost,color=overlapThreshold,size=gravityDecay))
-g+geom_point()+scale_size_area(max_size = 2)+ggtitle(paste0('GIS ; distribSd=',distribSdVal,' ; transportationCost=',transportationCostVal))
+
+# tests paretos for gis
+#g = ggplot(sresgis[sresgis$distribSd==distribSdVal&sresgis$transportationCost==transportationCostVal,],
+#           aes(x=totalWaste,y=totalCost,color=overlapThreshold,size=gravityDecay))
+#g+geom_point()+scale_size_area(max_size = 2)+ggtitle(paste0('GIS ; distribSd=',distribSdVal,' ; transportationCost=',transportationCostVal))
 
 
-g = ggplot(resgis[resgis$distribSd==distribSdVal&resgis$transportationCost==transportationCostVal,],
-           aes(x=totalWaste,y=totalCost,color=overlapThreshold,size=gravityDecay))
-g+geom_point()+geom_smooth()+scale_size_area(max_size = 2)+ggtitle(paste0('GIS ; distribSd=',distribSdVal,' ; transportationCost=',transportationCostVal))
+#g = ggplot(resgis[resgis$distribSd==distribSdVal&resgis$transportationCost==transportationCostVal,],
+#           aes(x=totalWaste,y=totalCost,color=overlapThreshold,size=gravityDecay))
+#g+geom_point()+geom_smooth()+scale_size_area(max_size = 2)+ggtitle(paste0('GIS ; distribSd=',distribSdVal,' ; transportationCost=',transportationCostVal))
 
 
 
@@ -293,7 +295,8 @@ uids=unique(ids)
 vuids = as.character(1:length(uids));names(vuids) = uids
 res$Parameters = vuids[ids]
 
-param_points = sample(vuids,size=6)
+#param_points = sample(vuids,size=6)
+param_points=c("14914","16772","18169","21771","22193","8977")
 
 sample = res[res$Parameters%in%param_points,]
 
@@ -315,7 +318,7 @@ g+geom_density(alpha=0.4)+xlab("Relative cost")+ylab("Density")+stdtheme
 ggsave(file=paste0(resdir,'distrib_cost.png'),width=22,height=20,units='cm')
 
 # write param values for the sample
-write.csv((sample%>%group_by(Parameters)%>%summarise(gravityDecay=mean(gravityDecay),distribSd=mean(distribSd),overlapThreshold=mean(overlapThreshold),transportationCost=mean(transportationCost))),file=paste0(resdir,'distrib_sample.csv'))
+write.csv((sample%>%group_by(Parameters)%>%summarise(gravityDecay=mean(gravityDecay),distribSd=mean(distribSd),overlapThreshold=mean(overlapThreshold),transportationCost=mean(transportationCost),setupType=setupType[1])),file=paste0(resdir,'distrib_sample.csv'))
 
 ##########
 ## Pareto score
@@ -330,29 +333,75 @@ getParetoFront <- function(o1,o2){
   return(!dominated)
 }
 
-distribSdVal = 0.55
-transportationCostVal=0.0
-pareto = sresgis[sresgis$distribSd==distribSdVal&sresgis$transportationCost==transportationCostVal,]
-length(which(getParetoFront(pareto$totalCost,pareto$totalWaste)))
+#distribSdVal = 0.55
+#transportationCostVal=0.0
+#pareto = sresgis[sresgis$distribSd==distribSdVal&sresgis$transportationCost==transportationCostVal,]
+#length(which(getParetoFront(pareto$totalCost,pareto$totalWaste)))
 
 transportationCosts=c()
 distribSds=c()
 paretosizes=c()
+setups=c()
+spreads=c()
+
+#costType="totalCost"
+costType="cost"
+
 for(transportationCostVal in unique(sressynth$transportationCost[sressynth$transportationCost>0])){
   for(distribSdVal in unique(sressynth$distribSd)){
-    show(paste0(transportationCostVal,distribSdVal))
-    #pareto = sresgis[sresgis$distribSd==distribSdVal&sresgis$transportationCost==transportationCostVal,]
-    pareto = sressynth[sressynth$distribSd==distribSdVal&sressynth$transportationCost==transportationCostVal,]
-    #pareto = ressynth[ressynth$distribSd==distribSdVal&ressynth$transportationCost==transportationCostVal,]
-    paretosizes=append(paretosizes,length(which(getParetoFront(pareto$totalCost,pareto$totalWaste)))/nrow(pareto))
-    transportationCosts=append(transportationCosts,transportationCostVal)
-    distribSds=append(distribSds,distribSdVal)
+    for(setupType in unique(sressynth$setupType)){
+      show(paste0(transportationCostVal,distribSdVal))
+      #pareto = sresgis[sresgis$distribSd==distribSdVal&sresgis$transportationCost==transportationCostVal,]
+      #pareto = ressynth[ressynth$distribSd==distribSdVal&ressynth$transportationCost==transportationCostVal,]
+      
+      currentdata = sressynth[sressynth$distribSd==distribSdVal&sressynth$transportationCost==transportationCostVal&sressynth$setupType==setupType,]
+      
+      #currentfront = getParetoFront(currentdata$totalCost,currentdata$totalWaste)
+      currentfront = getParetoFront(currentdata[[costType]],currentdata$totalWaste)
+      
+      paretosizes=append(paretosizes,length(which(currentfront))/nrow(pareto))
+      transportationCosts=append(transportationCosts,transportationCostVal)
+      distribSds=append(distribSds,distribSdVal);setups=append(setups,setupType)
+      # relative spread of pareto fronts
+      spreads = append(spreads,(max(currentdata$totalWaste[currentfront])-min(currentdata$totalWaste[currentfront]))/(max(currentdata[[costType]][currentfront])-min(currentdata[[costType]][currentfront])))
+    }
   }
 }
+setups[setups=="synthetic-city-system"]="synthetic"
 
-g=ggplot(data.frame(paretosizes,transportationCost=transportationCosts,distribSd=distribSds),aes(x=transportationCost,y=paretosizes,color=distribSd))
-g+geom_point()+geom_smooth()
+# linear factor for cost does not change the size of the front ! but the relative spread.
 
-g=ggplot(data.frame(paretosizes,transportationCost=transportationCosts,distribSd=distribSds),aes(x=distribSd,y=paretosizes,color=transportationCost))
-g+geom_point()+geom_smooth()
+g=ggplot(data.frame(paretosizes,transportationCost=transportationCosts,distribSd=distribSds,Setup=setups),
+         aes(x=transportationCost,y=paretosizes,color=distribSd,linetype=Setup,group=Setup,shape=Setup))
+g+geom_point()+geom_smooth()+xlab("Transportation cost c")+ylab("Size of Pareto front")+
+  scale_color_continuous(name=expression(sigma))+stdtheme
+ggsave(file=paste0(resdir,'/pareto_sizes_trCost_',costType,'.png'),width=18,height=15,units = 'cm')
+
+
+g=ggplot(data.frame(paretosizes,transportationCost=transportationCosts,distribSd=distribSds,Setup=setups),
+         aes(x=distribSd,y=paretosizes,color=transportationCost,linetype=Setup,group=Setup,shape=Setup))
+g+geom_point()+geom_smooth()+xlab("Distribution width")+ylab("Size of Pareto front")+
+  scale_color_continuous(name=expression(c))+stdtheme
+ggsave(file=paste0(resdir,'/pareto_sizes_sigma_',costType,'.png'),width=18,height=15,units = 'cm')
+
+# spread
+
+
+g=ggplot(data.frame(paretosizes,spreads,transportationCost=transportationCosts,distribSd=distribSds,Setup=setups),
+         aes(x=transportationCost,y=spreads,color=distribSd,linetype=Setup,group=Setup,shape=Setup))
+g+geom_point()+geom_smooth()+xlab("Transportation cost c")+ylab("Relative spread of front")+
+  scale_color_continuous(name=expression(sigma))+stdtheme
+ggsave(file=paste0(resdir,'/pareto_spreads_trCost_',costType,'.png'),width=18,height=15,units = 'cm')
+
+
+g=ggplot(data.frame(paretosizes,spreads,transportationCost=transportationCosts,distribSd=distribSds,Setup=setups),
+         aes(x=distribSd,y=spreads,color=transportationCost,linetype=Setup,group=Setup,shape=Setup))
+g+geom_point()+geom_smooth()+xlab("Distribution width")+ylab("Relative spread of front")+
+  scale_color_continuous(name=expression(c))+stdtheme
+ggsave(file=paste0(resdir,'/pareto_spreads_sigma_',costType,'.png'),width=18,height=15,units = 'cm')
+
+
+
+
+
 

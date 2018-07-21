@@ -150,7 +150,7 @@ CHOOSER
 setup-type
 setup-type
 "synthetic-city-system" "uniform" "gis"
-0
+1
 
 SLIDER
 5
@@ -206,7 +206,7 @@ distrib-var
 distrib-var
 0
 1
-0.04
+0.02
 0.01
 1
 NIL
@@ -248,8 +248,8 @@ interaction-decay
 interaction-decay
 0
 100
-43.949
-0.0001
+90.0
+1.0
 1
 NIL
 HORIZONTAL
@@ -263,7 +263,7 @@ bargain-threshold
 bargain-threshold
 0
 1
-0.06
+0.0
 0.01
 1
 NIL
@@ -278,8 +278,8 @@ transportation-cost
 transportation-cost
 0
 10
-1.27
-0.01
+2.0
+0.1
 1
 NIL
 HORIZONTAL
@@ -483,7 +483,7 @@ average-distance-variability
 average-distance-variability
 0
 50
-2.4
+0.0
 0.05
 1
 NIL
@@ -537,6 +537,17 @@ NIL
 NIL
 NIL
 1
+
+INPUTBOX
+306
+10
+366
+70
+id
+16772
+1
+0
+String
 
 @#$#@#$#@
 ## WHAT IS IT?
