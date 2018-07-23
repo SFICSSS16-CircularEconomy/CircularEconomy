@@ -2,9 +2,25 @@
 ;; setup
 
 
+;;
+; setup only companies but keep the same spatial distribution
+to reset
+  random-seed seed
+  
+  setup-globals
+  
+  ask flows [die] ask companies [die]
+ 
+ setup-companies
+ reset-ticks 
+end
+  
+
 
 to setup
   if headless? = 0 [ca]
+  
+  random-seed seed
   
   setup-globals 
  

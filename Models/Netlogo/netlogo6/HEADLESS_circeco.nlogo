@@ -85,6 +85,9 @@ globals [
   density-file
   density-exponent
 
+  seed
+  id
+
 ]
 
 
