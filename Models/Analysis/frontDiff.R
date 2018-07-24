@@ -3,19 +3,25 @@
 
 library(dplyr)
 
-setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Models/NetLogo/netlogo6'))
+
+setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Models/Netlogo/netlogo6'))
 
 resdirpref='exploration/20180722_1631_NSGA2_SYNTHETIC_TRCOST3_DISTRIBSD0.01'
 outdir = 'explo/20180722_1631_NSGA2_SYNTHETIC_TRCOST3_DISTRIBSD0.01/'
 
 latestgen = sort(as.numeric(sapply(strsplit(sapply(strsplit(list.files(resdirpref),'population',fixed=T),function(x){x[2]}),'.',fixed=T),function(x){x[1]})),decreasing=T)[1]
 
+show(paste0('latest gen is ',latestgen))
+
 currentres <- as.tbl(read.csv(paste0(resdirpref,'/population1.csv')))
+
+
 
 minc=c();minw=c()
 frontsize=c();frontdiff=c()
 for(generation in 2:latestgen){
-  prevres = currentres
+   show(generation)
+      	prevres = currentres
   currentres <- as.tbl(read.csv(paste0(resdirpref,'/population',generation,'.csv')))
   
   minc=append(minc,min(currentres$relativeCost));minw=append(minw,min(currentres$totalWaste))
