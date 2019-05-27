@@ -27,5 +27,5 @@ for(i in 1:n){
 }
 
 res = data.frame(idrow = 1:n,code = codes[1:n],name = names,lon = lon,lat = lat)
-  
+save(res,file='geocode_wastehandler.RData')
 
