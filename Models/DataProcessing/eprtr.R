@@ -14,8 +14,8 @@ library(nominatim)
 
 #osm_geocode(codes[1:10],key='GmFUKXAg4vykLxJOx3Pzt7KGJXKuKG9b')
 
-#n = length(codes)
-n=2
+n = length(codes)
+#n=2
 
 key=as.character(read.csv('apikey',header=F)[1,1])
 
@@ -34,4 +34,5 @@ for(i in 1:n){
 
 #res = data.frame(idrow = 1:n,code = codes[1:n],name = names,lon = lon,lat = lat)
 save(inds,names,lon,lat,file='geocode_wastehandler.RData')
+
 
