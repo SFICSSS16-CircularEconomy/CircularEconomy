@@ -4,9 +4,9 @@ setwd(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Models/DataProcessing'))
 library(dplyr)
 
 
-#transfer <- as.tbl(read.csv(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Data/EPRTR/E-PRTR_database_v16_csv/dbo.PUBLISH_WASTETRANSFER.csv')))
+#transfer <- as.tbl(read.csv(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Data/EPRTR/E-PRTR_database_v16_csv/dbo.PUBLISH_WASTETRANSFER.csv'),fileEncoding='latin1'))
 #activities <- as.tbl(read.csv(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Data/EPRTR/E-PRTR_database_v16_csv/dbo.PUBLISH_ACTIVITY.csv')))
-facilities <- as.tbl(read.csv(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Data/EPRTR/E-PRTR_database_v16_csv/dbo.PUBLISH_FACILITYREPORT.csv')))
+facilities <- as.tbl(read.csv(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Data/EPRTR/E-PRTR_database_v16_csv/dbo.PUBLISH_FACILITYREPORT.csv'),fileEncoding='latin1'))
 
 
 #unique(as.character(transfer$WasteHandlerPartyAddressCity))
@@ -22,8 +22,8 @@ library(nominatim)
 
 #osm_geocode(codes[1:10],key='GmFUKXAg4vykLxJOx3Pzt7KGJXKuKG9b')
 
-#n = length(codes)
-n=10
+n = length(codes)
+#n=10
 
 key=as.character(read.csv('apikey',header=F)[1,1])
 
