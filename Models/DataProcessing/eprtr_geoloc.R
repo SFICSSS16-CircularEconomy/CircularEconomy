@@ -24,6 +24,10 @@ n = length(codes)
 #n=10
 toget = 1:n
 
+load('geocode_facilities_2.RData')
+previnds = inds
+toget = setdiff(toget,previnds)
+
 key=as.character(read.csv('apikey',header=F)[1,1])
 
 names=c();lon=c();lat=c();
@@ -44,7 +48,7 @@ for(i in toget){
 
 #res = data.frame(idrow = 1:n,code = codes[1:n],name = names,lon = lon,lat = lat)
 #save(inds,names,lon,lat,file='geocode_wastehandler.RData')
-save(inds,names,lon,lat,file='geocode_facilities_2.RData')
+save(inds,names,lon,lat,file='geocode_facilities_3.RData')
 
 show(inds)
 show(names)

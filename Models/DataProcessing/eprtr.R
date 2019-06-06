@@ -25,11 +25,12 @@ load('geocode_wastehandler.RData')
 transfer_conso = left_join(transfer,data.frame(code=codes_transfer[1:length(lat)],lon=lon,lat=lat))
 transfer_conso=transfer_conso[!is.na(transfer_conso$lon),]
 
-load('geocode_facilities.RData')
-facilities_conso = left_join(facilities,data.frame(code=codes[1:length(lat)],lon=lon,lat=lat))
+#load('geocode_facilities.RData')
+load('geocode_facilities_2.RData')
+facilities_conso = left_join(facilities,data.frame(code=codes[inds],lon=lon,lat=lat))
 facilities_conso=facilities_conso[!is.na(facilities_conso$lon),]
 
-# TODO add transfer volume
+#  add transfer volume -> transfer_conso$Quantity  // all are in tons
 
 
 library(sf)
@@ -71,4 +72,13 @@ all$total = all$count+all$dcount
 summary(all)
 
 all[all$total==max(all$total),]
+
+
+
+#######
+# test a flow map for the nuts with most transfers
+
+
+
+
 
