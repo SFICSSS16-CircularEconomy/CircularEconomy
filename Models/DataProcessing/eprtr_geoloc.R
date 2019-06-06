@@ -6,7 +6,7 @@ library(dplyr)
 
 #transfer <- as.tbl(read.csv(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Data/EPRTR/E-PRTR_database_v16_csv/dbo.PUBLISH_WASTETRANSFER.csv'),fileEncoding='latin1'))
 #activities <- as.tbl(read.csv(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Data/EPRTR/E-PRTR_database_v16_csv/dbo.PUBLISH_ACTIVITY.csv')))
-facilities <- as.tbl(read.csv(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Data/EPRTR/E-PRTR_database_v16_csv/dbo.PUBLISH_FACILITYREPORT.csv')))#,fileEncoding='latin1'))
+facilities <- as.tbl(read.csv(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Data/EPRTR/E-PRTR_database_v16_csv/dbo.PUBLISH_FACILITYREPORT.csv'),fileEncoding='latin1'))
 
 
 #unique(as.character(transfer$WasteHandlerPartyAddressCity))
@@ -46,6 +46,9 @@ for(i in toget){
 #save(inds,names,lon,lat,file='geocode_wastehandler.RData')
 save(inds,names,lon,lat,file='geocode_facilities_2.RData')
 
+show(inds)
+show(names)
+show(lon)
 #load('geocode_facilities.RData')
 
 
