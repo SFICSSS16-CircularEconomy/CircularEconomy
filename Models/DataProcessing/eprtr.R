@@ -5,6 +5,7 @@ library(dplyr)
 library(cartography)
 library(ggplot2)
 
+resdir = paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Results/RealData/EPRTR/');dir.create(resdir)
 
 transfer <- as.tbl(read.csv(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Data/EPRTR/E-PRTR_database_v16_csv/dbo.PUBLISH_WASTETRANSFER.csv')))#,fileEncoding='latin1'))
 facilities <- as.tbl(read.csv(paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Data/EPRTR/E-PRTR_database_v16_csv/dbo.PUBLISH_FACILITYREPORT.csv')))#,fileEncoding='latin1'))
@@ -23,13 +24,14 @@ transfer$code = paste0(as.character(transfer$WasteHandlerPartyAddressCountryCode
 facilities$code = paste0(as.character(facilities$CountryCode)," ",as.character(facilities$PostalCode))
 
 # relaunch as null not taken into account in transfer also
-load('geocode_wastehandler.RData')
-transfer_conso = left_join(transfer,data.frame(code=codes_transfer[1:length(lat)],lon=lon,lat=lat))
+load('geocode_wastehandler_2.RData')
+transfer_conso = left_join(transfer,data.frame(code=codes_transfer[inds],lon=lon,lat=lat))
 transfer_conso=transfer_conso[!is.na(transfer_conso$lon),]
 
 #load('geocode_facilities.RData')
-load('geocode_facilities_2.RData')
-facilities_conso = left_join(facilities,data.frame(code=codes[inds],lon=lon,lat=lat))
+load('geocode_facilities_2.RData');allinds=inds;alllat=lat;alllon=lon
+load('geocode_facilities_3.RData');allinds=append(allinds,inds);alllat=append(alllat,lat);alllon=append(alllon,lon)
+facilities_conso = left_join(facilities,data.frame(code=codes[allinds],lon=alllon,lat=alllat))
 facilities_conso=facilities_conso[!is.na(facilities_conso$lon),]
 
 #  add transfer volume -> transfer_conso$Quantity  // all are in tons
@@ -69,74 +71,165 @@ transfersf = transfersf %>% st_transform(st_crs(nuts))
 
 transfer_nuts = st_join(transfersf, nuts, join =  st_intersects)
 
-g=ggplot(nuts[nuts$CNTR_CODE=='NL',])
-g+geom_sf()+geom_sf(data=facilitiesf[sample(which(facilities_nuts$CNTR_CODE=='NL'),1000),"geometry"],col='red')+
-  geom_sf(data=transfer_nuts %>% group_by('code') %>% filter(CNTR_CODE=='NL') %>% summarise(geometry = geometry[1]) ,col='blue')
+#g=ggplot(nuts[nuts$CNTR_CODE=='NL',])
+#g+geom_sf()+geom_sf(data=facilitiesf[sample(which(facilities_nuts$CNTR_CODE=='NL'),1000),"geometry"],col='red')+
+#  geom_sf(data=transfer_nuts %>% group_by('code') %>% filter(CNTR_CODE=='NL') %>% summarise(geometry = geometry[1]) ,col='blue')
 
 
+# construct flow dataframe
 
-
-#dcount = transfer_nuts %>%  group_by(NUTS_ID) %>% summarise(count=n())
-#dcount = data.frame(nuts = dcount$NUTS_ID,dcount=dcount$count)
-
-# this is not correct ! - should construct transfer matrix with transfer origin and destination coordinates
-#all = left_join(ocount,dcount)
-#all$count[is.na(all$count)] = 0
-#all$dcount[is.na(all$dcount)] = 0
-#all = all[!is.na(all$nuts),]
-#all$total = all$count+all$dcount
-#summary(all)
-#all[all$total==max(all$total),]
-#all[all$count==max(all$count),]
-
-flows = as.data.frame(transfer_nuts[,c("FacilityReportID","Quantity","code","lon","lat","NUTS_ID")])
+flows = as.data.frame(transfer_nuts[,c("FacilityReportID","Quantity","WasteTreatmentName","code","lon","lat","NUTS_ID","CNTR_CODE")])
 flows$geometry=NULL
-names(flows)<-c("FacilityReportID","quantity","destination_code","destination_lon","destination_lat","destination_nuts")
-origdf = as.data.frame(facilities_nuts[,c("FacilityReportID","ProductionVolumeQuantity","code","lon","lat","NUTS_ID")])
+names(flows)<-c("FacilityReportID","quantity","treatment","destination_code","destination_lon","destination_lat","destination_nuts","destination_country")
+origdf = as.data.frame(facilities_nuts[,c("FacilityReportID","ProductionVolumeQuantity","code","lon","lat","NUTS_ID","CNTR_CODE")])
 origdf$geometry=NULL
 flows = left_join(flows,origdf)
-names(flows)[8:11]<-c("origin_code","origin_lon","origin_lat","origin_nuts")
-# 619,722 flows
+names(flows)[10:14]<-c("origin_code","origin_lon","origin_lat","origin_nuts","origin_country")
+# 617,344 flows
 
-flows = flows[!is.na(flows$origin_nuts)&!is.na(flows$destination_nuts),]
-# 413621 flows
+flows = flows[!is.na(flows$origin_nuts)&!is.na(flows$destination_nuts)&!is.na(flows$origin_country)&!is.na(flows$destination_country),]
+# 566,615 flows
 
-internalnutsflows = flows[flows$origin_nuts==flows$destination_nuts,]
-# only 494 !
-#  SHIT - pb on nuts overlay
+intracountryflows = flows[flows$origin_country==flows$destination_country,]
+# 36019
+intracountryflows = intracountryflows[nchar(intracountryflows$destination_code)>4&nchar(intracountryflows$origin_code)>4,]
+
+
+
+intranutsflows = flows[flows$origin_nuts==flows$destination_nuts,]
+#  6621
+
+# filter on existing o/d code ?
+intranutsflows = intranutsflows[nchar(intranutsflows$destination_code)>4&nchar(intranutsflows$origin_code)>4,]
+
+nutscount = intranutsflows %>% group_by(origin_nuts) %>% summarize(count=n())
+nutscount[nutscount$count==max(nutscount$count),]
+# -> best is BE3 - with no dest code => ??? pb, geocoded the country only.
+#NL3
+
+countrycount = intracountryflows %>% group_by(origin_country) %>% summarize(count=n())
+countrycount[countrycount$count==max(countrycount$count),]
+
+areas = rbind(transfer_nuts[,c('code','NUTS_ID','geometry')],facilities_nuts[,c('code','NUTS_ID','geometry')])
+areas=areas[!duplicated(areas),]
+
 
 #######
 # test a flow map for the nuts with most transfers
 
-# -> test a map for nuts ITC
+for(mapped in unique(nuts$CNTR_CODE)){
+  show(mapped)
+#mapped_nuts = 'ITC'
+#mapped_nuts = 'BE3'
+#mapped_nuts = 'IE0'
+#mapped_nuts = 'NL3'
+#mapped='BE'
+#mapped='DE'
+#mapflows = intranutsflows[intranutsflows$origin_nuts==mapped_nuts,]
+mapflows = intracountryflows[intracountryflows$origin_country==mapped,]
 
-mapped_nuts = 'ITC'
-mapped_transfer
+if(nrow(mapflows)>10){
 
-threshold = 0.99
-fsflows = sflows[sflows$count>quantile(sflows$count,threshold),]
-fsflows$id = paste0(fsflows$from_msoa,fsflows$to_msoa)
-fsflows$linktype = rep("aggreg",nrow(fsflows))
+# filter flows - geocod errors ?
+#st_bbox(c(xmin = min(nuts[nuts$CNTR_CODE==mapped,])), 
+#          ymin = ifelse(is.na(ymin),  -90,  ymin), 
+#          xmax = ifelse(is.na(xmax), +180, xmax), 
+#          ymax = ifelse(is.na(ymax),  +90, ymax)), 
+#        crs = st_crs(nuts)) %>% sf::st_as_sfc(.)
 
-links <- getLinkLayer(x=msoa,xid='MSOA11CD',fsflows,dfid = c("from_msoa","to_msoa"))
-links$id = paste0(links$from_msoa,links$to_msoa)
-links = left_join(links,fsflows[,c('id','count')])
+#threshold = 0.99
+#mapflows = mapflows[mapflows$quantity>quantile(mapflows$quantity,threshold),]
+#mapflows$linktype = rep("aggreg",nrow(mapflows))
+mapflows$id = paste0(mapflows$origin_code,mapflows$destination_code)
+mapflows$treatment=as.character(mapflows$treatment)
 
+#currentareas = areas[areas$NUTS_ID==mapped_nuts&areas$code%in%c(mapflows$origin_code,mapflows$destination_code),]
+currentareas = areas[areas$code%in%c(mapflows$origin_code,mapflows$destination_code),]
+currentareas=currentareas[!duplicated(currentareas$code),]
+currentareas <- currentareas[which(lengths(st_within(currentareas, nuts[nuts$CNTR_CODE==mapped,])) != 0), ]
 
-png(filename = "Results/map_aggreg_flows.png",width = 40, height = 35, units = "cm",res=300)
-plot(st_geometry(msoa), col = "grey13", border = "grey25", bg = "grey25", lwd = 0.5)
+# refilter flows
+mapflows=mapflows[mapflows$origin_code%in%currentareas$code&mapflows$destination_code%in%currentareas$code,]
+
+links <- getLinkLayer(x=currentareas,xid='code',df=mapflows,dfid = c("origin_code","destination_code"))
+
+links$id = paste0(links$origin_code,links$destination_code)
+links = left_join(links,mapflows[,c('id','quantity','treatment')])
+links$treatment=as.character(links$treatment)
+
+#png(filename = paste0(resdir,'intranutsflows_',mapped_nuts,'.png'),width = 40, height = 35, units = "cm",res=300)
+png(filename = paste0(resdir,'intracountryflows_',mapped,'_osm.png'),width = 20, height = 18, units = "cm",res=300)
+
+#plot(st_geometry(nuts[nuts$CNTR_CODE==mapped,]), col = "grey35", border = "grey55", bg = "grey55", lwd = 0.5)
+
+osm <- getTiles(
+  x = nuts[nuts$CNTR_CODE==mapped,], 
+  type = "osm", 
+  zoom = 11, 
+  crop = TRUE
+)
+tilesLayer(x = osm)
+plot(st_centroid(st_geometry(nuts[nuts$CNTR_CODE==mapped,])), col = NA, border = "grey", add=TRUE)
+
 gradLinkTypoLayer(
   x = links,
-  df = fsflows,
-  var = "count", 
-  breaks = c( min(fsflows$count),  quantile(fsflows$count,c(0.25)), median(fsflows$count), quantile(fsflows$count,c(0.995)), quantile(fsflows$count,c(0.9995))),
-  lwd = c(0.5,1,2,5),
-  var2 = "linktype"
-) 
-layoutLayer(title = "Aggregated flows between MSOA",
+  xid=c("origin_code","destination_code"),
+  df = mapflows,
+  dfid=c("origin_code","destination_code"),
+  var = "quantity",
+  breaks = c( min(mapflows$quantity),  quantile(mapflows$quantity,c(0.25)), median(mapflows$quantity), quantile(mapflows$quantity,c(0.995)), quantile(mapflows$quantity,c(0.9995))),
+  lwd = c(1,2,5,10)/2,
+  var2 = "treatment"
+)
+layoutLayer(title = paste0("Waste transfer flows in ",mapped),
             frame = FALSE, col = "grey25", coltitle = "white",
             tabtitle = TRUE)
 dev.off()
+
+}
+}
+
+
+#######
+## Export NL data for calibration
+
+mapped='NL'
+mapflows = intracountryflows[intracountryflows$origin_country==mapped,]
+mapflows$id = paste0(mapflows$origin_code,mapflows$destination_code)
+mapflows$treatment=as.character(mapflows$treatment)
+
+currentareas = areas[areas$code%in%c(mapflows$origin_code,mapflows$destination_code),]
+currentareas=currentareas[!duplicated(currentareas$code),] # no duplicated
+currentareas <- currentareas[which(lengths(st_within(currentareas, nuts[nuts$CNTR_CODE==mapped,])) != 0), ]
+
+mapflows=mapflows[mapflows$origin_code%in%currentareas$code&mapflows$destination_code%in%currentareas$code,]
+mapflows = mapflows[mapflows$origin_code!=mapflows$destination_code,] # ! ok at scale of country ?
+
+# currentareas$code is unique -> can become numerical id
+areasids = 1:length(currentareas$code)
+names(areasids)<-currentareas$code
+
+rawxcor = sapply(st_geometry(currentareas),function(g){g[[1]]})
+rawycor = sapply(st_geometry(currentareas),function(g){g[[2]]})
+
+xcor = (rawxcor - min(rawxcor))/(max(rawxcor)-min(rawxcor))
+ycor = (rawycor - min(rawycor))/(max(rawycor)-min(rawycor))
+
+exportdir = '../Netlogo/netlogo6/setup/'
+
+# companies
+write.table(data.frame(areasids,xcor,ycor),file=paste0(exportdir,'companies.csv'),sep=";",col.names = F,row.names = F,quote=F)
+
+# flows
+# ! pb if only NAs in production volumes -> assume all the same and rescale with a log
+# kind of log-normal
+# goes with scaling law for company size.
+# rq: in the model assumed same size - do the same here - see ability of model to reproduce such a distrib from
+# uniform company size
+
+write.table(data.frame(areasids[mapflows$origin_code],areasids[mapflows$destination_code],mapflows$quantity),file=paste0(exportdir,'links.csv'),sep=";",col.names = F,row.names = F,quote=F)
+
+
 
 
 
