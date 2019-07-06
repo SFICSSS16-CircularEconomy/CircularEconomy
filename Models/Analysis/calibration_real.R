@@ -44,9 +44,29 @@ for(param in parameters){
 # + also launch single obj
 
 
+summary(condres[condres$errorLinkLength<100&condres$errorRelativeCost<200,])
 
 
+######
+## biobjective links / link length
 
+paramnames = list(overlapThreshold = expression(T[0]),transportationCost=expression(c),distribSd=expression(sigma),gravityDecay=expression(d[0]))
+
+for(param in parameters){
+  g=ggplot(res,aes_string(x="errorNetworkSize",y="errorLinkLength",color=param))
+  g+geom_point()+xlab("Squared error on network size")+ylab("Squared error on average link length")+
+    scale_color_continuous(name=paramnames[[param]])+stdtheme#ggtitle("Conditionall")
+  ggsave(paste0(resdir,'/pareto_errorNetworkSize-errorLinkLength_color',param,'.png'),width=20,height=18,units='cm')
+}
+
+# -> still condres ?
+
+for(param in parameters){
+  g=ggplot(condres,aes_string(x="errorNetworkSize",y="errorLinkLength",color=param))
+  g+geom_point()+xlab("Squared error on network size")+ylab("Squared error on average link length")+
+    scale_color_continuous(name=paramnames[[param]])+stdtheme#ggtitle("Conditionall")
+  ggsave(paste0(resdir,'/pareto_condnwSize_errorNetworkSize-errorLinkLength_color',param,'.png'),width=20,height=18,units='cm')
+}
 
 
 

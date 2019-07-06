@@ -68,6 +68,7 @@ to-report relative-cost [flowlinks]
 end
 
 to-report normalized-relative-cost [flowlinks]
+  if length [weight] of flowlinks = 0 [report 0]
   let ma max [weight] of flowlinks let mi min [weight] of flowlinks
   report sum [(weight - mi) / (ma - mi) * link-length / (sqrt (world-width ^ 2 + world-height ^ 2))] of flowlinks
 end
@@ -172,6 +173,7 @@ to-report error-relative-cost
 end
 
 to-report error-link-length
+  if length [link-length] of flows = 0 [report (mean [link-length] of real-flows)^ 2]
   report (mean [link-length] of flows - mean [link-length] of real-flows)^ 2
 end
 
