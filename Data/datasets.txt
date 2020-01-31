@@ -1,0 +1,30 @@
+
+E-PRTR dataset
+ https://www.eea.europa.eu/data-and-maps/data/member-states-reporting-art-7-under-the-european-pollutant-release-and-transfer-register-e-prtr-regulation-18
+
+country-country material flows
+https://data.europa.eu/euodp/data/dataset?q=circular+economy&ext_boolean=all&sort=
+https://ec.europa.eu/eurostat/tgm/table.do?tab=table&plugin=1&language=en&pcode=cei_srm030
+https://data.europa.eu/euodp/data/dataset/s9pmQGiG4OUvJ6KoIdxrw
+
+French open data ?
+nothing beside waste mgt initiatives https://geo.data.gouv.fr/fr/datasets/591527bd1800fc9fd6f2d8350403d3c6ea4dcff6
+
+
+Bib :
+Raabe, B., Low, J. S. C., Juraschek, M., Herrmann, C., Tjandra, T. B., Ng, Y. T., ... & Tan, Y. S. (2017). Collaboration platform for enabling industrial symbiosis: Application of the by-product exchange network model. Procedia CIRP, 61, 263-268.
+
+Yeo, Z., Masi, D., Low, J. S. C., Ng, Y. T., Tan, P. S., & Barnes, S. Tools for promoting industrial symbiosis: A systematic review. Journal of Industrial Ecology.
+
+Bin, S., Zhiquan, Y., Jonathan, L. S. C., Jiewei, D. K., Kurle, D., Cerdas, F., & Herrmann, C. (2015). A big data analytics approach to develop industrial symbioses in large cities. Procedia CIRP, 29, 450-455. => crawling (but not open dataset)
+
+Zhu, J., Fan, C., Shi, H., & Shi, L. (2019). Efforts for a circular economy in China: A comprehensive review of policies. Journal of Industrial Ecology, 23(1), 110-118. + suppmat with policies https://onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1111%2Fjiec.12754&file=jiec12754-sup-0001-SuppMat.pdf
+
+Prendeville, S., Cherim, E., & Bocken, N. (2018). Circular cities: mapping six cities in transition. Environmental innovation and societal transitions, 26, 171-194.
+
+Systematic review of information systems for circular economy : van Capelleveen, G., Amrit, C., & Yazan, D. M. (2018). A literature survey of information systems facilitating the identification of industrial symbiosis. In From Science to Society (pp. 155-169). Springer, Cham.
+
+
+
+
+

@@ -28,6 +28,8 @@ __includes [
 
   "utils/SpatialKernels.nls"
   "utils/List.nls"
+  "utils/File.nls"
+  "utils/String.nls"
 
 
 
@@ -50,6 +52,10 @@ globals [
   distrib-bootstrap-step
 
   dmax
+
+  setup:companies-positions
+  setup:companies-ids
+  setup:real-links
 
   ;;;;;;;;;;
   ; runtime
@@ -102,6 +108,9 @@ breed [companies company]
 
 companies-own[
 
+
+  company:id
+
   ;;
   ; Input and ouput distributions
   ;    coded as distretized [0;1]
@@ -134,6 +143,13 @@ centers-own [
 directed-link-breed [flows flow]
 
 flows-own [
+  weight
+]
+
+
+directed-link-breed [real-flows real-flow]
+
+real-flows-own [
   weight
 ]
 @#$#@#$#@

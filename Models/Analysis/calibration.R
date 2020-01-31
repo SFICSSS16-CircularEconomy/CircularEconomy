@@ -7,7 +7,7 @@ source(paste0(Sys.getenv("CN_HOME"),'/Models/Utils/R/plots.R'))
 #resdirpref='20180615_1623_NSGA2_SYNTHETIC_TRCOST1.0_DISTRIBSD0.1'
 #res <- as.tbl(read.csv(paste0('explo/',resdirpref,'/population879.csv')))
 resdirpref='20180722_1631_NSGA2_SYNTHETIC_TRCOST3_DISTRIBSD0.01'
-generation='45000'
+generation='50000'
 
 res <- as.tbl(read.csv(paste0('explo/',resdirpref,'/population',generation,'.csv')))
 resdir=paste0(Sys.getenv('CS_HOME'),'/CircularEconomy/Results/Calibration/',resdirpref);dir.create(resdir)

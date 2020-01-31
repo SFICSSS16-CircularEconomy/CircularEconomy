@@ -1,0 +1,23 @@
+
+
+%  evolution.generation  gravityDecay   overlapThreshold transportationCost   distribSd       errorRelativeCost
+% Min.   :28700        Min.   :14.28   Min.   :0.3807   Min.   :0.1000     Min.   :0.01000   Min.   :141.3    
+% 1st Qu.:28700        1st Qu.:15.13   1st Qu.:0.4445   1st Qu.:0.1830     1st Qu.:0.01000   1st Qu.:162.0    
+% Median :28700        Median :16.09   Median :0.4863   Median :0.2733     Median :0.01000   Median :173.7    
+% Mean   :28700        Mean   :16.36   Mean   :0.4616   Mean   :0.2677     Mean   :0.01001   Mean   :171.7    
+% 3rd Qu.:28700        3rd Qu.:17.50   3rd Qu.:0.4875   3rd Qu.:0.3041     3rd Qu.:0.01001   3rd Qu.:182.5    
+% Max.   :28700        Max.   :18.93   Max.   :0.5000   Max.   :0.5263     Max.   :0.01004   Max.   :198.2    
+% errorLinkLength errorNetworkSize evolution.samples
+% Min.   :49.58   Min.   :100.0    Min.   :1.000    
+% 1st Qu.:54.17   1st Qu.:158.5    1st Qu.:1.000    
+% Median :56.20   Median :361.0    Median :1.000    
+% Mean   :65.37   Mean   :423.9    Mean   :2.286    
+% 3rd Qu.:79.09   3rd Qu.:702.5    3rd Qu.:3.000    
+% Max.   :85.32   Max.   :784.0    Max.   :6.000  
+
+
+%The calibrated parameters can for example be applied to a policy problem, that would be as before enforcing location of new companies entering the network to minimize total waste. The optimal location problem can indeed be solved directly knowing companies locations and products, but with uncertainty due to geographical span of interaction and companies preferences, captured in our case by $d_0$ and $T_0$.
+% applying the calibrated model : additional companies -> optimal location
+% show optimal locations ? -> always close to a company ? depending on remaining distribution ! -> biased in that sense ?
+
+

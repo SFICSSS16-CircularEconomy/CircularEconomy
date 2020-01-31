@@ -29,6 +29,8 @@ __includes [
   "utils/SpatialKernels.nls"
   "utils/List.nls"
   "utils/Statistics.nls"
+  "utils/File.nls"
+  "utils/String.nls"
 
 
 ]
@@ -51,6 +53,18 @@ globals [
 
   dmax
 
+  ;;
+  ; optional list of company positions (real data setup)
+  setup:companies-positions
+
+  ;;
+  ; optional list of company ids (real data)
+  setup:companies-ids
+
+  ;;
+  ; list of real links
+  ; [ [company-id1 company-id2 relative-flow] ... ]
+  setup:real-links
 
   ;;;;;;;;;;
   ; runtime
@@ -81,6 +95,10 @@ patches-own [
 breed [companies company]
 
 companies-own[
+
+  ;;
+  ; id used for real data setup
+  company:id
 
   ;;
   ; Input and ouput distributions
@@ -114,6 +132,13 @@ directed-link-breed [flows flow]
 flows-own [
   weight
 ]
+
+directed-link-breed [real-flows real-flow]
+
+real-flows-own [
+  weight
+]
+
 @#$#@#$#@
 GRAPHICS-WINDOW
 382
@@ -149,8 +174,8 @@ CHOOSER
 70
 setup-type
 setup-type
-"synthetic-city-system" "uniform" "gis"
-1
+"synthetic-city-system" "uniform" "gis" "real-data"
+3
 
 SLIDER
 5
@@ -161,7 +186,7 @@ SLIDER
 #-cities
 0
 10
-5.0
+3.0
 1
 1
 NIL
@@ -191,7 +216,7 @@ SLIDER
 #-companies
 0
 100
-50.0
+199.0
 1
 1
 NIL
@@ -278,7 +303,7 @@ transportation-cost
 transportation-cost
 0
 10
-2.0
+1.8
 0.1
 1
 NIL
@@ -311,8 +336,8 @@ OUTPUT
 PLOT
 1016
 21
-1280
-213
+1199
+165
 waste
 time
 total waste
@@ -403,10 +428,10 @@ total-waste
 11
 
 PLOT
-1016
-216
-1279
-389
+1201
+21
+1374
+165
 cost
 time
 cost
@@ -418,26 +443,26 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot relative-cost"
+"default" 1.0 0 -16777216 true "" "plot relative-cost flows"
 
 MONITOR
 1096
 402
 1160
 447
-NIL
-total-cost
+cost
+total-cost flows
 17
 1
 11
 
 BUTTON
-1198
-410
-1326
-443
-NIL
-compute-indicators
+1180
+375
+1308
+408
+indicators
+compute-indicators false
 NIL
 1
 T
@@ -548,6 +573,59 @@ id
 1
 0
 String
+
+PLOT
+1010
+179
+1177
+320
+real flows
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "set-plot-x-range min [weight] of real-flows max [weight] of real-flows set-plot-pen-mode 1 histogram [weight] of real-flows"
+
+PLOT
+1186
+181
+1386
+331
+flows
+NIL
+NIL
+0.0
+1.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "if count flows > 0 [if min [weight] of flows < max [weight] of flows [set-plot-x-range min [weight] of flows max [weight] of flows set-plot-pen-mode 1 histogram [weight] of flows]]"
+
+BUTTON
+1179
+412
+1299
+445
+indicators real
+compute-indicators true
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?

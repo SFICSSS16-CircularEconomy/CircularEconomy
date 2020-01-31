@@ -38,7 +38,13 @@ to setup
     setup-gis 
   ]
   
+  if setup-type = "real-data" [
+    ; also nothing to do for population density 
+  ]
+  
   setup-companies
+  
+  setup-initial-flows
   
   color-patches
   
@@ -60,6 +66,21 @@ to setup-globals
   set waste-history []
   
   set dmax sqrt (world-width ^ 2 + world-height ^ 2)
+  
+  set setup:companies-positions [] set setup:companies-ids []
+  set setup:real-links []
+  if setup-type = "real-data" [
+    let companiesdata (read-csv "setup/companies.csv" ";") let real-links (read-csv "setup/links.csv" ";")
+    set setup:real-links real-links
+    foreach companiesdata [
+      r -> 
+      ; company data csv file is assumed as id;x;y - id could be superflous but better make it explicit for readibility
+      let xr (item 1 r) let yr (item 2 r) ; between 0 and 1 -> rescaled
+      let x (max-pxcor - min-pxcor)* xr let y (max-pycor - min-pycor)* yr 
+      set setup:companies-positions lput (list x y) setup:companies-positions
+      set setup:companies-ids lput (item 0 r) setup:companies-ids
+    ]
+  ]
   
 end
 
@@ -109,13 +130,23 @@ end
 
 to setup-companies
   let patch-list to-list patches
-  let uniform (sum [density] of patches = 0)
+  let population? (sum [density] of patches = 0)
+  let current-company-index 0 ; used only for real data setup
+  if length setup:companies-ids > 0 [set #-companies length setup:companies-ids]
   create-companies #-companies [ 
    
     ; draw position at random given density distrib
     ; 
-    ifelse uniform = true [
-      setxy random-xcor random-ycor
+    ifelse population? = true [
+      if setup-type = "uniform" [
+        setxy random-xcor random-ycor
+      ]
+      if setup-type = "real-data" [
+        let currentcoords item current-company-index setup:companies-positions
+        setxy first currentcoords last currentcoords
+        set company:id item current-company-index setup:companies-ids
+        set current-company-index current-company-index + 1
+      ]
     ][
       let s 0
       let stot sum [density ^ density-exponent] of patches
@@ -128,4 +159,30 @@ to setup-companies
     new-company
   ]
 end
+
+
+;;
+; optional initial flows (none for now)
+;  and real flows in the case of real data setup
+to setup-initial-flows
+  
+  if setup-type = "real-data" [
+    
+    foreach setup:real-links [
+      r ->
+      ;show (item 0 r) show (item 1 r)
+      ask one-of companies with [company:id = (item 0 r)][
+        create-real-flow-to one-of companies with [company:id = (item 1 r)] [
+          set weight item 2 r
+          set thickness (max list 0.1 (ln item 2 r) / 10)
+        ] 
+      ]
+    ]
+    
+  ]
+  
+  
+end
+
+
 
