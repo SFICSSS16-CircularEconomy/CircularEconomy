@@ -1,0 +1,64 @@
+import java.util.Date
+import java.text.SimpleDateFormat
+
+
+// variables
+val gravityDecay = Val[Double]
+val distribSd = Val[Double]
+val overlapThreshold = Val[Double]
+val transportationCost = Val[Double]
+
+// indicators
+val totalWaste = Val[Double]
+val relativeCost = Val[Double]
+
+val errorRelativeCost = Val[Double]
+val errorLinkLength = Val[Double]
+val errorNetworkSize = Val[Double]
+val totalError = Val[Double]
+
+val id = Val[Int]
+val replication = Val[Int]
+
+// setup-experiment [setuptype distribtype distribution-sd gravity-decay overlap-threshold transport-cost average-distance-variability]
+val cmds = Seq("setup-experiment \"real-data\" \"uniform-mean-gaussian\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost} 0","run-experiment")
+
+//val trcostval = 3
+//val distribSdval = 0.01
+
+
+val model =
+NetLogo6Task(workDirectory / "HEADLESS_circeco.nlogo",cmds,embedWorkspace=true,reuseWorkspace=true) set(
+    inputs += (gravityDecay,distribSd,overlapThreshold,transportationCost),
+    outputs += (gravityDecay,distribSd,overlapThreshold,transportationCost),
+    outputs += totalWaste mapped "total-waste",
+    outputs += relativeCost mapped "relative-cost flows",
+    outputs += errorRelativeCost mapped "error-relative-cost",
+    outputs += errorLinkLength mapped "error-link-length",
+    outputs += errorNetworkSize mapped "error-network-size",
+    outputs += totalError mapped "error-relative-cost + error-link-length + error-network-size"
+)
+
+
+val purpose = "LHSCALIB_TEST"
+
+//val env = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 2000 megabytes)
+val env = LocalEnvironment(5)
+
+val indics_hook = AppendToCSVFileHook(workDirectory / "exploration" / (((new SimpleDateFormat("yyyyMMdd_HHmmss")).format(new Date()))+"_"+purpose+".csv"))
+
+
+val exploration =
+  DirectSampling(
+    evaluation = (model on env hook indics_hook),
+    sampling = (
+    LHS(2,
+      gravityDecay in Range(10.0,90.0),
+      distribSd in Range(0.01,0.06),
+      overlapThreshold in Range(0.0,0.2),
+      transportationCost in Range(0.5,3.6)
+   )
+   withIndex id ) x (replication in UniformDistribution[Int](1000) take 5)
+)
+
+exploration

@@ -1,0 +1,188 @@
+
+;; setup
+
+
+;;
+; setup only companies but keep the same spatial distribution
+to reset
+  random-seed seed
+  
+  setup-globals
+  
+  ask flows [die] ask companies [die]
+ 
+ setup-companies
+ reset-ticks 
+end
+  
+
+
+to setup
+  if headless? = 0 [ca]
+  
+  random-seed seed
+  
+  setup-globals 
+ 
+  if setup-type = "synthetic-city-system" [
+    setup-synthetic 
+  ]
+  
+  if setup-type = "uniform" [
+     ; nothing to do, just setup companies
+     ;;  Note : our modular archi is profudly shitty here, intrincated
+     
+  ]
+  
+  if setup-type = "gis" [
+    setup-gis 
+  ]
+  
+  if setup-type = "real-data" [
+    ; also nothing to do for population density 
+  ]
+  
+  setup-companies
+  
+  setup-initial-flows
+  
+  color-patches
+  
+  reset-ticks
+end
+
+
+
+to setup-globals
+  
+  ;
+  ;set synthetic-hierarchy 1.1
+  
+  ;
+  set distrib-discretization-step 1000
+  
+  set distrib-bootstrap-step 10000
+   
+  set waste-history []
+  
+  set dmax sqrt (world-width ^ 2 + world-height ^ 2)
+  
+  set setup:companies-positions [] set setup:companies-ids []
+  set setup:real-links []
+  if setup-type = "real-data" [
+    let companiesdata (read-csv "setup/companies.csv" ";") let real-links (read-csv "setup/links.csv" ";")
+    set setup:real-links real-links
+    foreach companiesdata [
+      r -> 
+      ; company data csv file is assumed as id;x;y - id could be superflous but better make it explicit for readibility
+      let xr (item 1 r) let yr (item 2 r) ; between 0 and 1 -> rescaled
+      let x (max-pxcor - min-pxcor)* xr let y (max-pycor - min-pycor)* yr 
+      set setup:companies-positions lput (list x y) setup:companies-positions
+      set setup:companies-ids lput (item 0 r) setup:companies-ids
+    ]
+  ]
+  
+end
+
+
+to setup-gis
+  let dataset gis:load-dataset (word density-file ".asc")
+  resize-world 0 (gis:width-of dataset) 0 (gis:height-of dataset) set-patch-size floor (600 / gis:width-of dataset)
+  gis:set-world-envelope gis:envelope-of gis:load-dataset (word density-file "_extent.shp")
+  gis:apply-raster dataset density
+  ask patches [if not (density >= 0)[set density 0]]
+  let stot sum [density] of patches
+  ask patches [set density density / stot]
+  gis:set-drawing-color brown
+  gis:draw gis:load-dataset (word density-file ".shp") 1
+end
+
+
+
+to setup-synthetic
+  
+  generate-synthetic-density
+  
+end
+
+
+to generate-synthetic-density
+  ; P_i = Pmax / i ^ \alpha - with Pmax= 1, P_i = 1/i^alpha ; total pop for one kernel : P = 1/i^alpha = 2*pi*r_i
+  let i 1
+  repeat #-cities [
+    let p (one-of patches with [pxcor > min-pxcor + 10 and pxcor < max-pxcor - 10 and pycor > min-pycor + 10 and pycor < max-pycor - 10])
+    let pop city-radius / (i ^ (synthetic-hierarchy - 1))
+    ask p [sprout-centers 1 [
+      ;set hidden? true
+    ]
+    ]
+    apply-poisson-kernel pop 1 "density" p
+    set i i + 1
+  ]
+  let stot sum [density] of patches
+  ask patches [set density density / stot]
+  
+  set i 1
+  ask centers [set distribution-average i / #-cities set i i + 1]
+  
+end
+
+
+to setup-companies
+  let patch-list to-list patches
+  let population? (sum [density] of patches = 0)
+  let current-company-index 0 ; used only for real data setup
+  if length setup:companies-ids > 0 [set #-companies length setup:companies-ids]
+  create-companies #-companies [ 
+   
+    ; draw position at random given density distrib
+    ; 
+    ifelse population? = true [
+      if setup-type = "uniform" [
+        setxy random-xcor random-ycor
+      ]
+      if setup-type = "real-data" [
+        let currentcoords item current-company-index setup:companies-positions
+        setxy first currentcoords last currentcoords
+        set company:id item current-company-index setup:companies-ids
+        set current-company-index current-company-index + 1
+      ]
+    ][
+      let s 0
+      let stot sum [density ^ density-exponent] of patches
+      let r random-float stot let found false foreach patch-list [
+        p ->
+          ask p [set s s + (density ^ density-exponent)] if s > r and not found [setxy [pxcor] of p [pycor] of p set found true]]
+      setxy xcor - 0.5 + random-float 1 ycor - 0.5 + random-float 1
+    ]
+    
+    new-company
+  ]
+end
+
+
+;;
+; optional initial flows (none for now)
+;  and real flows in the case of real data setup
+to setup-initial-flows
+  
+  if setup-type = "real-data" [
+    
+    foreach setup:real-links [
+      r ->
+      ;show (item 0 r) show (item 1 r)
+      ask one-of companies with [company:id = (item 0 r)][
+        create-real-flow-to one-of companies with [company:id = (item 1 r)] [
+          set weight item 2 r
+          set thickness (max list 0.1 (ln item 2 r) / 10)
+        ] 
+      ]
+    ]
+    
+  ]
+  
+  
+end
+
+
+

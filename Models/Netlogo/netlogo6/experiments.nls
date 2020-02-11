@@ -1,0 +1,55 @@
+
+;; experiments
+
+
+
+;;
+;
+to setup-experiment [setuptype distribtype distribution-sd gravity-decay overlap-threshold transport-cost avg-dist-variability]
+  
+  clear-all
+  
+  ; setup vars
+  
+  ; fixed
+  set #-cities 5
+  set city-radius 5
+  set synthetic-hierarchy 1.3
+  set #-companies 50
+  set density-file "data/nld"
+  set density-exponent 1.5
+  
+  
+  ; setup-type choice : synthetic-city-system ; uniform
+  set setup-type setuptype
+  set distrib-type distribtype ; \in {"uniform-mean-gaussian","closest-center-mean-gaussian"}
+  set distrib-var distribution-sd
+  set interaction-decay gravity-decay
+  set bargain-threshold overlap-threshold
+  set transportation-cost transport-cost
+  set average-distance-variability avg-dist-variability
+  
+  
+  set headless? true
+  
+  setup
+  
+end
+
+
+to run-experiment
+  while [true] [
+    go
+    if stop-criteria? [stop] 
+  ]
+  setup-indicators false
+end
+
+
+to test-experiment
+  ; setup-experiment [setuptype distribtype distribution-sd gravity-decay overlap-threshold transport-cost avg-dist-variability]
+  ;setup-experiment "synthetic-city-system" "closest-center-mean-gaussian" 0.05 10 0.05 3.5 5.0
+  setup-experiment "uniform" "uniform-mean-gaussian" 0.01 10 0.05 2.0 0.0
+  run-experiment
+  compute-indicators false
+end

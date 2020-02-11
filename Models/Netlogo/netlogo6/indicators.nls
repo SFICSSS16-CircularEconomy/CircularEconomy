@@ -1,0 +1,188 @@
+
+
+;; indicators
+
+;; indicators 
+;  (in time and final) are for now :
+;
+; - total-waste
+; - total-cost
+; - final-time
+; - network : components, centrality, in/out-degree, mean-flow (==number of edges given total waste), clustering coef
+;  
+
+; TODO : mean path length as circularity
+
+
+
+to setup-indicators [real?]
+  set-nw-context real?
+end
+
+
+to compute-indicators [real?]
+  setup-indicators real?
+  output-print (word "total-waste : " total-waste)
+  output-print (word "total-cost : " total-cost flows)
+  output-print (word "relative-cost : " relative-cost flows)
+  output-print (word "final-time : " final-time)
+  output-print (word "network-components : " network-components)
+  ;output-print (word "network-centrality : " network-centrality)
+  output-print (word "network-in-degree : " network-in-degree)
+  output-print (word "network-out-degree : " network-out-degree)
+  output-print (word "network-mean-flow : " network-mean-flow)
+  output-print (word "network-clustering-coeficient : " network-clustering-coeficient)
+  output-print (word "network-size : "  network-size)
+  output-print (word "moran-averages : " moran-averages)
+  output-print (word "population-moran : " population-moran)
+  output-print (word "population-entropy : " population-entropy)
+  output-print (word "population-slope : " population-slope)
+  output-print (word "population-distance : " population-distance)
+end
+
+
+
+;;
+; total waste accross all companies ; normalized by company number
+to-report total-waste
+  report sum [sum output-distribution] of companies / count companies
+end
+
+
+
+;;;;;
+;; network-indcators
+
+
+;; cost of the network
+;  for now : transportation cost
+to-report total-cost [flowlinks]
+  report sum [transportation-cost * weight * link-length / (sqrt (world-width ^ 2 + world-height ^ 2))] of flowlinks
+end
+
+
+;;
+; cost normalized by transportation cost
+to-report relative-cost [flowlinks]
+  report sum [weight * link-length / (sqrt (world-width ^ 2 + world-height ^ 2))] of flowlinks
+end
+
+to-report normalized-relative-cost [flowlinks]
+  if length [weight] of flowlinks = 0 [report 0]
+  let ma max [weight] of flowlinks let mi min [weight] of flowlinks
+  report sum [(weight - mi) / (ma - mi) * link-length / (sqrt (world-width ^ 2 + world-height ^ 2))] of flowlinks
+end
+
+
+
+
+to set-nw-context [real?]
+  
+  ifelse real? = false [
+    nw:set-context companies flows
+  ][
+    nw:set-context companies real-flows
+  ]
+    
+  ; if weighted betweeness centrality is needed here, need to estimate it by hand.
+  ;  ...
+  
+end
+
+
+;;
+; wrapper for ticks
+to-report final-time
+  report ticks
+end
+
+
+;;
+; moran index
+to-report moran-averages
+  ; brute force computation
+  let mu mean [distrib-mean] of companies
+  let scov 0 let svar 0 let wtot 0
+  ask companies [set svar svar + ((distrib-mean - mu)^ 2) ask other companies [if distance myself > 0 [let w 1 / distance myself set scov scov + (w * (distrib-mean - mu)*([distrib-mean] of myself - mu)) set wtot wtot + w]]]
+  ifelse wtot * svar = 0 [report 0][report (count companies)* scov / (wtot * svar)]
+end
+
+
+to-report population-moran
+  ifelse max [density] of patches = 0 [report 0][report morphology:moran 0]
+end
+
+to-report population-distance
+  ifelse max [density] of patches = 0 [report 0][report morphology:distance 0]
+end
+
+to-report population-entropy
+  ifelse max [density] of patches = 0 [report 0][report morphology:entropy 0]
+end
+
+to-report population-slope
+  ifelse max [density] of patches = 0 [report 0][report item 0 morphology:slope 0]
+end
+
+;components, centrality, in/out-degree, mean-flow (==number of edges given total waste)
+
+
+;;
+; number of links
+to-report network-size
+  report count flows
+end
+
+
+to-report network-components
+  report length nw:weak-component-clusters
+end
+
+; bug in centrality
+;to-report network-centrality
+;  report mean [nw:weighted-closeness-centrality "weight"] of companies
+;end
+
+to-report network-in-degree
+   report mean [count in-flow-neighbors] of companies
+end
+
+to-report network-out-degree
+   report mean [count out-flow-neighbors] of companies
+end
+
+to-report network-mean-flow
+  report mean [weight] of flows
+end
+
+to-report network-clustering-coeficient
+  report mean [nw:clustering-coefficient] of turtles
+end
+
+
+
+
+;;
+; calibration indicators
+
+;;
+; on normalized flows
+;  possibility take the log of real flows - what justification ?
+to-report error-relative-cost
+  report (normalized-relative-cost flows - normalized-relative-cost real-flows)^ 2
+end
+
+to-report error-link-length
+  if length [link-length] of flows = 0 [report (mean [link-length] of real-flows)^ 2]
+  report (mean [link-length] of flows - mean [link-length] of real-flows)^ 2
+end
+
+;;
+; optimize conditionaly on nw size ?
+to-report error-network-size
+  report (count flows - count real-flows)^ 2
+end
+
+
+
+

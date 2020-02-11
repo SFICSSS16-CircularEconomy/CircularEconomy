@@ -1,0 +1,105 @@
+import java.text.SimpleDateFormat
+import java.util.Date
+
+logger.level("FINE")
+
+// variables
+val gravityDecay = Val[Double]
+val distribSd = Val[Double]
+val overlapThreshold = Val[Double]
+val transportationCost = Val[Double]
+val averageDistanceVariability = Val[Double]
+
+// indicators
+val totalWaste = Val[Double]
+val totalCost = Val[Double]
+val relativeCost = Val[Double]
+val finalTime = Val[Double]
+val nwComponents = Val[Double]
+val nwCentrality = Val[Double]
+val nwInDegree = Val[Double]
+val nwOutDegree = Val[Double]
+val nwMeanFlow = Val[Double]
+val nwClustCoef = Val[Double]
+val nwSize = Val[Double]
+val moranAverages = Val[Double]
+
+val populationMoran = Val[Double]
+val populationEntropy = Val[Double]
+val populationSlope = Val[Double]
+val populationDistance = Val[Double]
+
+val setupType = Val[String] // synthetic-city-system ; uniform
+val distribType = Val[String] //"uniform-mean-gaussian","closest-center-mean-gaussian"
+
+val id = Val[Int]
+val replication = Val[Int]
+
+// setup-experiment [setuptype distribtype distribution-sd gravity-decay overlap-threshold transport-cost average-distance-variability]
+val cmds = Seq("setup-experiment \"${setupType}\" \"${distribType}\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost} ${averageDistanceVariability}","run-experiment")
+
+val model = NetLogo6Task(workDirectory / "HEADLESS_circeco.nlogo",cmds,embedWorkspace=true,reuseWorkspace=true) set(
+    inputs += (setupType,distribType,gravityDecay,distribSd,overlapThreshold,transportationCost,averageDistanceVariability),
+    outputs += (setupType,distribType,gravityDecay,distribSd,overlapThreshold,transportationCost,averageDistanceVariability),
+    outputs += totalWaste mapped "total-waste",
+    outputs += totalCost mapped "total-cost",
+    outputs += relativeCost mapped "relative-cost",
+    outputs += finalTime mapped "final-time",
+    outputs += nwComponents mapped "network-components",
+    outputs += nwInDegree mapped "network-in-degree",
+    outputs += nwOutDegree mapped "network-out-degree",
+    outputs += nwMeanFlow mapped "network-mean-flow",
+    outputs += nwClustCoef mapped "network-clustering-coeficient",
+    outputs += nwSize mapped "network-size",
+    outputs += moranAverages mapped "moran-averages",
+    outputs += populationMoran mapped "population-moran",
+    outputs += populationEntropy mapped "population-entropy",
+    outputs += populationSlope mapped "population-slope",
+    outputs += populationDistance mapped "population-distance"
+)
+
+
+val purpose = "DIRECTSAMPLING_SYNTHETIC"
+//val purpose = "TEST"
+
+val indics_hook = AppendToCSVFileHook(workDirectory / "exploration" / ((new SimpleDateFormat("yyyyMMdd_HHmmss")).format(new Date()))+"_"+purpose+".csv")
+
+val env = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 2000 megabytes)
+//val env = LocalEnvironment(50)
+
+
+val replications =
+ Replication (
+   evaluation = (model on env by 30 hook indics_hook),
+   //evaluation = (model on env hook indics_hook),
+   seed = replication,
+   replications = 100
+   //replications = 50
+)
+
+val exploration =
+  DirectSampling(
+    evaluation = replications,
+    sampling = (
+      (
+	      (gravityDecay in (10.0 to 100.0 by 10.0))
+       x (distribSd in (0.01 to 0.1 by 0.01))
+       x (overlapThreshold in (0.0 to 0.2 by 0.025))
+       x (transportationCost in (0.5 to 3.6 by 0.25))
+       //x (averageDistanceVariability in (0.0 to 15.0 by 0.25)))
+      )
+      /*LHS(1,
+        gravityDecay in Range(10.0,90.0),
+	      distribSd in Range(0.01,0.06),
+        overlapThreshold in Range(0.0,0.2),
+        transportationCost in Range(0.5,3.6)//,
+        //averageDistanceVariability in Range(0.0,20.0)
+      )*/
+         withIndex id )
+         x (averageDistanceVariability is 0.0)
+         x (setupType in Seq("synthetic-city-system","uniform"))
+         x (distribType is "uniform-mean-gaussian")
+  )
+
+
+exploration

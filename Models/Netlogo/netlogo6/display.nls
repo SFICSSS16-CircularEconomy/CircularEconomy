@@ -1,0 +1,20 @@
+
+;; display
+
+to color-patches
+  let ma max [density] of patches let mi min [density] of patches
+  ifelse ma > mi [
+    ;ask patches [set pcolor gradient:scale [[200 200 200] [255 50 50]] density mi ma]
+    ask patches [set pcolor scale-color red (- density) (- ma) (- mi)]
+  ][
+  ask patches [set pcolor white]
+  ]
+end
+
+
+to export-conf
+  export-view (word "res/examples/id" id "_setup" setup-type "_d0" interaction-decay "_T0" bargain-threshold "_sigma" distrib-var "_c" transportation-cost "_seed" seed ".png")
+end
+
+
+

@@ -1,0 +1,64 @@
+import java.util.Date
+import java.text.SimpleDateFormat
+
+// variables
+val gravityDecay = Val[Double]
+val distribSd = Val[Double]
+val overlapThreshold = Val[Double]
+val transportationCost = Val[Double]
+
+// indicators
+val totalWaste = Val[Double]
+val relativeCost = Val[Double]
+
+val errorRelativeCost = Val[Double]
+val errorLinkLength = Val[Double]
+val errorNetworkSize = Val[Double]
+val totalError = Val[Double]
+
+val replication = Val[Int]
+
+// setup-experiment [setuptype distribtype distribution-sd gravity-decay overlap-threshold transport-cost average-distance-variability]
+val cmds = Seq("setup-experiment \"real-data\" \"uniform-mean-gaussian\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost} 0","run-experiment")
+
+//val trcostval = 3
+//val distribSdval = 0.01
+
+
+val model =
+NetLogo6Task(workDirectory / "HEADLESS_circeco.nlogo",cmds,embedWorkspace=true,reuseWorkspace=true) set(
+    inputs += (gravityDecay,distribSd,overlapThreshold,transportationCost),
+    outputs += (gravityDecay,distribSd,overlapThreshold,transportationCost),
+    outputs += totalWaste mapped "total-waste",
+    outputs += relativeCost mapped "relative-cost flows",
+    outputs += errorRelativeCost mapped "error-relative-cost",
+    outputs += errorLinkLength mapped "error-link-length",
+    outputs += errorNetworkSize mapped "error-network-size",
+    outputs += totalError mapped "error-relative-cost + error-link-length + error-network-size"
+)
+
+//val purpose = "NSGA2_REAL_SINGLEOBJ"
+val purpose = "NSGA2_REAL"
+//val purpose = "TEST"
+
+val env = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 2000 megabytes)
+//val env = LocalEnvironment(5)
+
+NSGA2Evolution(
+    evaluation = model,
+    mu = 200,
+    genome = Seq(
+        gravityDecay in Range(1.0,100.0),
+        overlapThreshold in Range(0.0,0.5),
+        transportationCost in Range(0.1,10.0),
+        distribSd in Range(0.01,0.5)
+    ),
+      objectives = Seq(errorRelativeCost,errorLinkLength,errorNetworkSize),
+      //objectives = Seq(totalError),
+      stochastic = Stochastic(seed = replication),
+      termination = 100000,
+      parallelism = 200,
+      distribution = Island(15 minutes),
+) hook ((workDirectory /  "calibration" / (((new SimpleDateFormat("yyyyMMdd_HHmm")).format(new Date()))+"_"+purpose)), frequency = 100) on env
+
+

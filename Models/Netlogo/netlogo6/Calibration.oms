@@ -1,0 +1,73 @@
+import java.util.Date
+import java.text.SimpleDateFormat
+
+logger.level("FINE")
+
+
+// variables
+val gravityDecay = Val[Double]
+val distribSd = Val[Double]
+val overlapThreshold = Val[Double]
+val transportationCost = Val[Double]
+
+// indicators
+val totalWaste = Val[Double]
+val totalCost = Val[Double]
+val relativeCost = Val[Double]
+val finalTime = Val[Double]
+val nwComponents = Val[Double]
+val nwCentrality = Val[Double]
+val nwInDegree = Val[Double]
+val nwOutDegree = Val[Double]
+val nwMeanFlow = Val[Double]
+val nwClustCoef = Val[Double]
+
+val replication = Val[Int]
+
+// setup-experiment [setuptype distribtype distribution-sd gravity-decay overlap-threshold transport-cost average-distance-variability]
+val cmds = Seq("setup-experiment \"synthetic-city-system\" \"uniform-mean-gaussian\" ${distribSd} ${gravityDecay} ${overlapThreshold} ${transportationCost} 0","run-experiment")
+
+val trcostval = 3
+val distribSdval = 0.01
+
+
+val model =
+NetLogo6Task(workDirectory / "HEADLESS_circeco.nlogo",cmds,embedWorkspace=true,reuseWorkspace=true) set(
+    inputs += (gravityDecay,distribSd,overlapThreshold,transportationCost),
+    outputs += (gravityDecay,distribSd,overlapThreshold,transportationCost),
+    netLogoOutputs += ("total-waste", totalWaste),
+    netLogoOutputs += ("relative-cost", relativeCost),
+    transportationCost := trcostval,
+    distribSd := distribSdval
+)
+
+val purpose = "NSGA2_SYNTHETIC_TRCOST"+trcostval+"_DISTRIBSD"+distribSdval
+
+val evolution =
+  SteadyStateEvolution(
+    algorithm = NSGA2(
+      mu = 200,
+      genome = Seq(
+      gravityDecay in Range(1.0,100.0),
+      overlapThreshold in Range(0.0,0.5)),
+      objectives = Seq(totalWaste,relativeCost),
+      stochastic = Stochastic(seed = replication)
+    ),
+    evaluation = model,
+    termination = 30 minutes//1 hours
+  )
+
+val island =
+  IslandEvolution(
+    island = evolution,
+    parallelism = 1000,
+    termination = 100000
+  )
+
+val savePopulationHook = SavePopulationHook(island, workDirectory /  "exploration" / ((new SimpleDateFormat("yyyyMMdd_HHmm")).format(new Date()))+"_"+purpose)
+
+val grid = EGIEnvironment("vo.complex-systems.eu",openMOLEMemory = 2000 megabytes)
+//val local = LocalEnvironment(20)
+
+island on grid hook savePopulationHook
+//island on local hook savePopulationHook
