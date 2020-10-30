@@ -1,4 +1,5 @@
 .Rhistory
 .texpadtmp
 .DS_Store
+*.tmp.nlogo
 

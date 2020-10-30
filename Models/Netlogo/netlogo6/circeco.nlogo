@@ -138,7 +138,6 @@ directed-link-breed [real-flows real-flow]
 real-flows-own [
   weight
 ]
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 382
@@ -175,7 +174,7 @@ CHOOSER
 setup-type
 setup-type
 "synthetic-city-system" "uniform" "gis" "real-data"
-3
+2
 
 SLIDER
 5
@@ -216,7 +215,7 @@ SLIDER
 #-companies
 0
 100
-199.0
+50.0
 1
 1
 NIL
@@ -273,7 +272,7 @@ interaction-decay
 interaction-decay
 0
 100
-90.0
+86.0
 1.0
 1
 NIL
@@ -575,10 +574,10 @@ id
 String
 
 PLOT
-1010
-179
-1177
-320
+625
+702
+792
+843
 real flows
 NIL
 NIL
@@ -590,13 +589,13 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "set-plot-x-range min [weight] of real-flows max [weight] of real-flows set-plot-pen-mode 1 histogram [weight] of real-flows"
+"pen1" 1.0 0 -16777216 true "" "set-plot-x-range min [weight] of real-flows max [weight] of real-flows set-plot-pen-mode 1 histogram [weight] of real-flows"
 
 PLOT
-1186
-181
-1386
-331
+801
+704
+1001
+854
 flows
 NIL
 NIL
@@ -969,7 +968,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.2
+NetLogo 6.1.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
