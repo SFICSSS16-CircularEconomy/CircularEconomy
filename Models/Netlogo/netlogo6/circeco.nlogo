@@ -215,7 +215,7 @@ SLIDER
 #-companies
 0
 100
-50.0
+75.0
 1
 1
 NIL
@@ -272,7 +272,7 @@ interaction-decay
 interaction-decay
 0
 100
-86.0
+95.0
 1.0
 1
 NIL
