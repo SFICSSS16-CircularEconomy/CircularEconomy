@@ -174,7 +174,7 @@ CHOOSER
 setup-type
 setup-type
 "synthetic-city-system" "uniform" "gis" "real-data"
-2
+1
 
 SLIDER
 5
@@ -215,7 +215,7 @@ SLIDER
 #-companies
 0
 100
-75.0
+199.0
 1
 1
 NIL
